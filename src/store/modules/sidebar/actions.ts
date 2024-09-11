@@ -5,4 +5,7 @@ export default {
   showIconSidebar(context: any) {
     context.commit("showIconSidebar");
   },
+  hoverSidebar(context: any, payload: Boolean) {
+    context.commit("hoverSidebar", payload);
+  }
 };

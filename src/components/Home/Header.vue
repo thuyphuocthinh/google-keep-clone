@@ -63,24 +63,64 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from "vue";
+import { computed, onMounted, onUnmounted } from "vue";
 import { useStore } from "vuex";
 const store = useStore();
 
 const isSiderFull = computed(() => store.state.sidebar.isSiderFull);
-const showFullSider = () => store.dispatch("showFullSidebar");
-const showIconSider = () => store.dispatch("showIconSidebar");
-
+const showFullSider = () => store.dispatch("sidebar/showFullSidebar");
+const showIconSider = () => store.dispatch("sidebar/showIconSidebar");
 const handleShowHideSidebar = () => {
-  if (isSiderFull) showIconSider();
+  if (isSiderFull.value) showIconSider();
   else showFullSider();
 };
+
+const handleScroll = (e) => {
+  const scrollY = window.scrollY;
+  const headerContainer = document.querySelector(".header-container");
+  if (scrollY > 50) {
+    headerContainer.classList.add("header-container-fixed");
+  } else {
+    headerContainer.classList.remove("header-container-fixed");
+  }
+};
+
+onMounted(() => {
+  window.addEventListener("scroll", handleScroll);
+});
+
+onUnmounted(() => {
+  removeEventListener("scroll", handleScroll);
+});
 </script>
 
 <style scoped>
 .header-container {
   border-bottom: 1px solid rgb(214, 214, 214);
+  transition: all 0.5s;
+  background-color: #fff;
   padding: 10px 5px;
+}
+
+@keyframes slideDown {
+  0% {
+    transform: translateY(-50%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.header-container-fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  background-color: #fff;
+  box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.4);
+  /* animation: name duration timing-function delay iteration-count direction fill-mode; */
+  animation: slideDown 0.5s forwards;
 }
 
 .header-container span {

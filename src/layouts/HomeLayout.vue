@@ -6,26 +6,38 @@
       class="home-content"
       :class="isSiderFull ? 'full' : 'icon'"
     >
-      Content
+      <div class="container">
+        <!-- <slot></slot> -->
+        <!-- I will change to router-view after that -->
+        <router-view />
+      </div>
     </a-layout-content>
   </a-layout>
 </template>
 
 <script lang="ts" setup>
-import { inject} from "vue";
+import { inject, computed } from "vue";
 import Header from "../components/Home/Header.vue";
 import Sidebar from "../components/Home/Sidebar.vue";
+import { useStore } from "vuex";
+const store = useStore();
 
+const isSiderFull = computed(() => store.state.sidebar.isSiderFull);
 </script>
 
 <style>
 .home-layout {
   min-height: 90vh;
   background-color: #fff !important;
+  padding-bottom: 20px;
 }
 
 .home-sider {
   min-height: 100% !important;
+}
+
+.home-content {
+  /* border: 1px solid black; */
 }
 
 .home-content.full {

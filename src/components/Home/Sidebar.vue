@@ -102,29 +102,34 @@ import { mapState, useStore } from "vuex";
 const store = useStore();
 
 const isSiderFull = computed(() => store.state.sidebar.isSiderFull);
-const showFullSider = () => store.dispatch("showFullSidebar");
-const showIconSider = () => store.dispatch("showIconSidebar");
+const canHover = computed(() => store.state.sidebar.canHover);
+
+
+const hoverSidebar = (value) =>
+  store.dispatch("sidebar/hoverSidebar", {
+    payload: value,
+  });
 
 const handleMouseMove = (e) => {
-  const { screenX } = e;
-  if (screenX > 0 && screenX < 75) {
-    showFullSider();
-  }
-  if (isSiderFull) {
+  const { screenX, screenY } = e;
+  if (canHover.value) {
+    if (screenX > 0 && screenX < 75 && screenY > 200) {
+      hoverSidebar(true);
+    }
     if (screenX > 270) {
-      showIconSider();
+      hoverSidebar(false);
     }
   }
 };
 
 onMounted(() => {
-  if (!isSiderFull) {
+  if (canHover.value) {
     window.addEventListener("mousemove", handleMouseMove);
   }
 });
 
 onUpdated(() => {
-  if (!isSiderFull) {
+  if (canHover.value) {
     window.addEventListener("mousemove", handleMouseMove);
   }
 });
@@ -137,6 +142,7 @@ onUnmounted(() => {
 <style>
 .home-sider {
   min-height: 100% !important;
+  
 }
 
 .home-sider.full {
@@ -153,16 +159,16 @@ onUnmounted(() => {
 }
 
 .home-sider.icon {
-  flex: 0 0 75px !important;
-  min-width: 75px !important;
+  flex: 0 0 85px !important;
+  min-width: 85px !important;
   max-width: none !important;
-  width: 75px !important;
+  width: 85px !important;
   background-color: #fff !important;
 }
 
 .home-content.icon {
   background-color: #fff !important;
-  width: calc(100% - 75px) !important;
+  width: calc(100% - 85px) !important;
 }
 
 .full-sider,
@@ -201,7 +207,7 @@ onUnmounted(() => {
 }
 
 .sider-link > .sider-icon {
-  width: 55px;
+  width: 65px;
   font-size: 20px;
   text-align: center;
 }
