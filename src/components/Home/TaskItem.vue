@@ -1,7 +1,12 @@
 <template>
-  <div class="task-item" draggable="true" ref="taskItemRef">
-    <span class="task-item-check" @click="handleSelectItem">
-      <i class="fa-solid fa-check"></i>
+  <div
+    class="task-item"
+    :class="tasksSelected.includes(task.id) ? 'selected' : ''"
+    draggable="true"
+    ref="taskItemRef"
+  >
+    <span :id="task.id" class="task-item-check" @click="handleSelectItem">
+      <i :id="task.id" class="fa-solid fa-check"></i>
     </span>
     <div @click="getTaskDetail(task.id)">
       <div class="task-header">{{ task.title }}</div>
@@ -16,7 +21,8 @@
       </div>
     </div>
     <div class="task-widgets">
-      <TaskWidgets :id="task.id" />
+      <TaskWidgets v-if="!task.deleted" :id="task.id" />
+      <TrashDelete v-else="!task.deleted" :id="task.id" />
     </div>
   </div>
 </template>
@@ -25,15 +31,19 @@
 import { Task } from "../../models/task";
 import TaskWidgets from "./TaskWidgets.vue";
 import TaskDetail from "./TaskDetail.vue";
+import TrashDelete from "../Trash/TrashDelete.vue";
 import { useStore } from "vuex";
 import { getTaskDetailService } from "../../services/taskServices";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, onUpdated, ref } from "vue";
 import type { Ref } from "vue";
 const store = useStore();
 const props = defineProps<{
   task: Task;
 }>();
 const taskItemRef = ref(null);
+const tasksSelected = computed(
+  () => store.getters["tasksModule/getTasksSelected"]
+);
 
 const getTaskDetail = (id: number) => {
   const taskDetail = getTaskDetailService(id);
@@ -42,8 +52,9 @@ const getTaskDetail = (id: number) => {
 };
 
 const handleSelectItem = () => {
-  taskItemRef.value.classList.toggle("selected");
+  store.dispatch("tasksModule/setTasksSelectedAction", props.task.id);
 };
+
 </script>
 
 <style>

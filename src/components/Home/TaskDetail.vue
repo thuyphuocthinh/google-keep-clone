@@ -7,6 +7,7 @@
         id="title"
         placeholder="Tiêu đề"
         v-model="taskUpdate.title"
+        :disabled="taskDetail.deleted"
       />
     </div>
     <div class="task-deadline">
@@ -22,6 +23,7 @@
         style="width: 200px"
         v-model="taskUpdate.deadline"
         :min="today"
+        :disabled="taskDetail.deleted"
       />
     </div>
     <div class="task-content">
@@ -32,13 +34,14 @@
           ref="textarea"
           v-model="input"
           placeholder="Nội dung ..."
+          :disabled="taskDetail.deleted"
         ></textarea>
       </span>
     </div>
-    <div class="task-widgets">
+    <div v-if="!taskDetail.deleted" class="task-widgets">
       <TaskWidgets />
     </div>
-    <div class="task-button">
+    <div v-if="!taskDetail.deleted" class="task-button">
       <a-button type="default" @click="cancel">Cancel</a-button>
       <a-button type="primary" @click="updateTask">Save changes</a-button>
     </div>

@@ -30,6 +30,7 @@ declare module 'vue' {
     ASubMenu: typeof import('ant-design-vue/es')['SubMenu']
     Header: typeof import('./src/components/Home/Header.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
+    Loading: typeof import('./src/components/Loading/Loading.vue')['default']
     Modal: typeof import('./src/components/Modal/Modal.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
@@ -38,6 +39,8 @@ declare module 'vue' {
     TaskDetail: typeof import('./src/components/Home/TaskDetail.vue')['default']
     TaskItem: typeof import('./src/components/Home/TaskItem.vue')['default']
     TaskWidgets: typeof import('./src/components/Home/TaskWidgets.vue')['default']
+    ToolBar: typeof import('./src/components/Home/ToolBar.vue')['default']
+    TrashDelete: typeof import('./src/components/Trash/TrashDelete.vue')['default']
     Workspace: typeof import('./src/components/Home/Workspace.vue')['default']
   }
 }

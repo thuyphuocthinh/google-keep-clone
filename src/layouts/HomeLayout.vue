@@ -1,5 +1,6 @@
 <template>
   <Header />
+  <ToolBar />
   <a-layout class="home-layout">
     <Sidebar />
     <a-layout-content
@@ -19,6 +20,7 @@
 import { inject, computed } from "vue";
 import Header from "../components/Home/Header.vue";
 import Sidebar from "../components/Home/Sidebar.vue";
+import ToolBar from "../components/Home/ToolBar.vue";
 import { useStore } from "vuex";
 const store = useStore();
 

@@ -7,4 +7,10 @@ export default {
   setTaskDetailAction({ commit }: any, taskDetail: Task) {
     commit("setTaskDetail", taskDetail);
   },
+  setTasksSelectedAction({ commit }: any, id: number) {
+    commit("setTasksSelected", id);
+  },
+  resetTasksSelectedAction({ commit }: any) {
+    commit("resetTasksSelected");
+  },
 };

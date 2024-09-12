@@ -1,6 +1,9 @@
 <template>
   <div class="workspace">
-    <div class="workspace-container">
+    <div v-if="isLoading" class="loading-spinner">
+      <Loading />
+    </div>
+    <div v-else class="workspace-container">
       <div class="row mt-4">
         <div class="col-md-4 col-12 mb-md-0 mb-3">
           <div class="workspace-col">
@@ -89,12 +92,14 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted } from "vue";
+import { computed, onBeforeMount, onMounted } from "vue";
 import { useStore } from "vuex";
 import TaskItem from "./TaskItem.vue";
 import { VueDraggable, DraggableEvent } from "vue-draggable-plus";
 import { changeTaskStatusService } from "../../services/taskServices";
-
+import type { Ref } from "vue";
+import { ref } from "vue";
+import Loading from "../Loading/Loading.vue";
 // Access the store instance
 const store = useStore();
 const tasksTodo = computed(() => store.getters["tasksModule/getTasksTodo"]);
@@ -102,6 +107,7 @@ const tasksProgress = computed(
   () => store.getters["tasksModule/getTasksProgress"]
 );
 const tasksDone = computed(() => store.getters["tasksModule/getTasksDone"]);
+const isLoading: Ref<Boolean> = ref(true);
 onMounted(() => {
   if (!localStorage.getItem("tasks")) {
     localStorage.setItem("tasks", "[]");
@@ -110,6 +116,9 @@ onMounted(() => {
   if (tasksStorage.length > 0) {
     store.dispatch("tasksModule/setTasksAction", tasksStorage);
   }
+  setTimeout(() => {
+    isLoading.value = false;
+  }, 3000);
 });
 
 // VueDraggable event handlers
@@ -149,6 +158,8 @@ function onClone(event: DraggableEvent) {}
 function onChange(event: DraggableEvent) {}
 
 function onMove(event: MoveEvent, originalEvent: Event) {}
+
+// life cycle
 </script>
 
 <style>

@@ -4,16 +4,22 @@ import Login from "../pages/Auth/Login.vue";
 import Register from "../pages/Auth/Register.vue";
 import HomeLayout from "../layouts/HomeLayout.vue";
 import Homepage from "../pages/Home/Homepage.vue";
+import Trashpage from "../pages/Trash/Trashpage.vue";
 
 const routes = [
   {
     path: "/",
-    name: "homepage",
     component: HomeLayout,
     children: [
       {
         path: "",
+        name: "homepage",
         component: Homepage,
+      },
+      {
+        path: "trash",
+        name: "trash",
+        component: Trashpage,
       },
     ],
   },

@@ -3,12 +3,12 @@
     <div v-if="isSiderFull" class="full-sider">
       <ul class="sider-list">
         <li class="sider-item">
-          <a href="#" class="sider-link active">
+          <router-link to="/" exact-active-class="active" class="sider-link">
             <span class="sider-icon">
               <i class="fa-regular fa-lightbulb"></i>
             </span>
             <span class="sider-title"> Ghi chú </span>
-          </a>
+          </router-link>
         </li>
         <li class="sider-item">
           <a href="#" class="sider-link">
@@ -35,12 +35,16 @@
           </a>
         </li>
         <li class="sider-item">
-          <a href="#" class="sider-link">
+          <router-link
+            to="/trash"
+            exact-active-class="active"
+            class="sider-link"
+          >
             <span class="sider-icon">
               <i class="fa-solid fa-trash"></i>
             </span>
             <span class="sider-title"> Thùng rác </span>
-          </a>
+          </router-link>
         </li>
       </ul>
     </div>
@@ -48,11 +52,11 @@
     <div v-else="isSiderFull" class="icon-sider">
       <ul class="sider-list">
         <li class="sider-item">
-          <a href="#" class="sider-link active">
+          <router-link to="/" exact-active-class="active" class="sider-link">
             <span class="sider-icon">
               <i class="fa-regular fa-lightbulb"></i>
             </span>
-          </a>
+          </router-link>
         </li>
         <li class="sider-item">
           <a href="#" class="sider-link">
@@ -76,11 +80,15 @@
           </a>
         </li>
         <li class="sider-item">
-          <a href="#" class="sider-link">
+          <router-link
+            to="/trash"
+            exact-active-class="active"
+            class="sider-link"
+          >
             <span class="sider-icon">
               <i class="fa-solid fa-trash"></i>
             </span>
-          </a>
+          </router-link>
         </li>
       </ul>
     </div>
@@ -103,7 +111,6 @@ const store = useStore();
 
 const isSiderFull = computed(() => store.state.sidebar.isSiderFull);
 const canHover = computed(() => store.state.sidebar.canHover);
-
 
 const hoverSidebar = (value) =>
   store.dispatch("sidebar/hoverSidebar", {
@@ -142,7 +149,6 @@ onUnmounted(() => {
 <style>
 .home-sider {
   min-height: 100% !important;
-  
 }
 
 .home-sider.full {

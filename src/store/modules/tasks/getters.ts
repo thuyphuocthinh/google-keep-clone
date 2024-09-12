@@ -7,12 +7,24 @@ export default {
     return state.tasks;
   },
   getTasksTodo(state: State): Task[] {
-    return state.tasks.filter((task: Task) => task.status === STATUS.TODO);
+    return state.tasks.filter(
+      (task: Task) => task.status === STATUS.TODO && !task.deleted
+    );
   },
   getTasksProgress(state: State): Task[] {
-    return state.tasks.filter((task: Task) => task.status === STATUS.PROGRESS);
+    return state.tasks.filter(
+      (task: Task) => task.status === STATUS.PROGRESS && !task.deleted
+    );
   },
   getTasksDone(state: State): Task[] {
-    return state.tasks.filter((task: Task) => task.status === STATUS.DONE);
+    return state.tasks.filter(
+      (task: Task) => task.status === STATUS.DONE && !task.deleted
+    );
+  },
+  getTasksSelected(state: State): number[] {
+    return state.tasksSelected;
+  },
+  getTasksDeleted(state: State): Task[] {
+    return state.tasks.filter((task: Task) => task.deleted);
   },
 };
