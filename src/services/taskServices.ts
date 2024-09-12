@@ -44,3 +44,23 @@ export const updateTaskService = (taskUpdate: Task): void => {
   });
   localStorage.setItem("tasks", JSON.stringify(tasksStorage));
 };
+
+export const changeTaskStatusService = (
+  id: number,
+  oldStatus: string,
+  newStatus: string
+): void => {
+  const tasksStorage = JSON.parse(localStorage.getItem("tasks") || "");
+  const findIndex: number = tasksStorage.findIndex(
+    (task: Task) => task.id === id && task.status === oldStatus
+  );
+  if (findIndex !== -1) {
+    tasksStorage[findIndex].status = newStatus;
+  }
+  tasksStorage.sort((a: Task, b: Task) => {
+    if (a.createdAt > b.createdAt) return -1;
+    else if (a.createdAt < b.createdAt) return 1;
+    return 0;
+  });
+  localStorage.setItem("tasks", JSON.stringify(tasksStorage));
+};

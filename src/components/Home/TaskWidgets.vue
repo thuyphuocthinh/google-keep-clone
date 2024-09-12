@@ -27,12 +27,13 @@
           @confirm="confirm(props.id)"
           @cancel="cancel"
         >
-          <li class="dropdown-item">Delete</li>
+          <li class="dropdown-item">
+            <span class="sider-icon">
+              <i class="fa-solid fa-trash"></i>
+            </span>
+            Delete
+          </li>
         </a-popconfirm>
-        <li class="dropdown-item">Add label</li>
-        <li class="dropdown-item">Add label</li>
-        <li class="dropdown-item">Add label</li>
-        <li class="dropdown-item">Add label</li>
       </ul>
     </div>
   </div>
@@ -144,7 +145,7 @@ onUnmounted(() => {
   left: 100%;
   transform: translateX(-40%);
   padding: 10px 0;
-  z-index: 10;
+  z-index: 1000;
 }
 
 .dropdown-list {
@@ -154,6 +155,15 @@ onUnmounted(() => {
 
 .dropdown-item {
   padding: 5px 20px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 0;
+}
+
+.dropdown-item span {
+  width: 20px;
+  height: 20px;
 }
 
 .dropdown-item:hover {

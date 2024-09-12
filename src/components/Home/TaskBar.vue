@@ -90,6 +90,7 @@ const resetValues = () => {
     image: "",
     deadline: today.value,
     status: STATUS.TODO,
+    deleted: false,
     createdAt:
       new Date().toLocaleDateString() + " - " + new Date().toLocaleTimeString(),
   };
@@ -102,6 +103,7 @@ let task: Task = reactive({
   image: "",
   deadline: today.value,
   status: STATUS.TODO,
+  deleted: false,
   createdAt:
     new Date().toLocaleDateString() + " - " + new Date().toLocaleTimeString(),
 });

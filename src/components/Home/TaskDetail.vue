@@ -66,6 +66,7 @@ let taskUpdate: Task = reactive({
   image: taskDetail.value.image,
   deadline: taskDetail.value.deadline,
   status: taskDetail.value.status,
+  deleted: taskDetail.value.deleted,
   createdAt: taskDetail.value.createdAt,
 });
 
