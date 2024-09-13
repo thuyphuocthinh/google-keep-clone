@@ -5,6 +5,7 @@ import Register from "../pages/Auth/Register.vue";
 import HomeLayout from "../layouts/HomeLayout.vue";
 import Homepage from "../pages/Home/Homepage.vue";
 import Trashpage from "../pages/Trash/Trashpage.vue";
+import Search from "../pages/Search/Search.vue";
 
 const routes = [
   {
@@ -20,6 +21,11 @@ const routes = [
         path: "trash",
         name: "trash",
         component: Trashpage,
+      },
+      {
+        path: "search",
+        name: "search",
+        component: Search,
       },
     ],
   },

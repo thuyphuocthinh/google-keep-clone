@@ -27,4 +27,7 @@ export default {
   getTasksDeleted(state: State): Task[] {
     return state.tasks.filter((task: Task) => task.deleted);
   },
+  getTasksSearch(state: State): Task[] {
+    return state.tasksSearch;
+  },
 };

@@ -16,17 +16,19 @@
           </div>
 
           <div class="header-middle">
-            <div class="header-search">
+            <form class="header-search" @submit.prevent="handleSubmitSearch">
               <span>
                 <i class="fa-solid fa-magnifying-glass"></i>
               </span>
               <input
+                ref="searchRef"
                 type="search"
-                name="search"
-                id="search"
+                name="keyword"
+                id="keyword"
                 placeholder="Tìm kiếm"
+                @input="handleTypingSearch"
               />
-            </div>
+            </form>
             <div class="header-tools">
               <span>
                 <i class="fa-solid fa-gear"></i>
@@ -63,11 +65,28 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, onUnmounted } from "vue";
+import {
+  computed,
+  onBeforeMount,
+  onMounted,
+  onUnmounted,
+  onUpdated,
+  ref,
+  renderSlot,
+  watch,
+} from "vue";
+import type { Ref } from "vue";
 import { useStore } from "vuex";
-const store = useStore();
+import { useRouter, useRoute } from "vue-router";
+import { searchService } from "../../services/searchServices";
 
+const store = useStore();
+const router = useRouter();
+const route = useRoute();
 const isSiderFull = computed(() => store.state.sidebar.isSiderFull);
+const searchRef = ref(null);
+const idTimeOut: Ref<number> = ref(0);
+
 const showFullSider = () => store.dispatch("sidebar/showFullSidebar");
 const showIconSider = () => store.dispatch("sidebar/showIconSidebar");
 const handleShowHideSidebar = () => {
@@ -75,7 +94,7 @@ const handleShowHideSidebar = () => {
   else showFullSider();
 };
 
-const handleScroll = (e) => {
+const handleScroll = (e: Event) => {
   const scrollY = window.scrollY;
   const headerContainer = document.querySelector(".header-container");
   if (scrollY > 50) {
@@ -84,6 +103,32 @@ const handleScroll = (e) => {
     headerContainer.classList.remove("header-container-fixed");
   }
 };
+
+const handleTypingSearch = (e: Event) => {
+  const { name, value } = e.target;
+  clearTimeout(idTimeOut.value);
+  idTimeOut.value = setTimeout(() => {
+    const result = searchService(value);
+    router.push({ path: `/search`, query: { keyword: value } });
+    store.dispatch("tasksModule/setTasksSearchAction", result);
+  }, 500);
+};
+
+const handleSubmitSearch = (e: Event) => {
+  const value: string = e.target.elements[0].value;
+  const result = searchService(value);
+  router.push({ path: `/search`, query: { keyword: value } });
+  store.dispatch("tasksModule/setTasksSearchAction", result);
+};
+
+watch(
+  () => route.path, // Watch the route's path specifically
+  (newPath) => {
+    if (!newPath.includes("/search") && searchRef.value) {
+      searchRef.value.value = ""; // Reset the search input field when not on /search
+    }
+  }
+);
 
 onMounted(() => {
   window.addEventListener("scroll", handleScroll);
@@ -195,7 +240,7 @@ onUnmounted(() => {
   background-color: #e4e4e4;
 }
 
-.header-search > input {
+.header-search input {
   flex: 1;
   height: 50px;
   /* height: 100%; */

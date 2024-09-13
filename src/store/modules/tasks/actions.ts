@@ -13,4 +13,7 @@ export default {
   resetTasksSelectedAction({ commit }: any) {
     commit("resetTasksSelected");
   },
+  setTasksSearchAction({ commit }: any, tasks: Task[]) {
+    commit("setTasksSearch", tasks);
+  },
 };

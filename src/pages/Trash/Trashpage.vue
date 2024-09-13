@@ -2,12 +2,14 @@
   <div class="trash my-4">
     <div class="trash-container">
       <div class="container">
-        <h6 class="mb-4"> ^ _ ^ Ghi chú trong thùng sẽ bị xóa sau 7 ngày ^ _ ^</h6>
+        <h6 class="mb-4">
+          ^ _ ^ Ghi chú trong thùng sẽ bị xóa sau 7 ngày ^ _ ^
+        </h6>
         <div class="row">
           <div
             v-for="task in tasksDeleted"
             :key="task.id"
-            class="col-md-3 mb-4"
+            class="col-lg-3 col-md-6 col-12 mb-4"
           >
             <TaskItem :task="task" />
           </div>

@@ -21,21 +21,48 @@
       </div>
     </div>
     <div class="task-widgets">
-      <TaskWidgets v-if="!task.deleted" :id="task.id" />
-      <TrashDelete v-else="!task.deleted" :id="task.id" />
+      <TaskWidgets v-if="!task.deleted" :id="task.id"> </TaskWidgets>
+      <div v-if="!task.deleted" class="task-tools-right">
+        <span @click="openDropdown" ref="openDropdownBtnRef">
+          <i class="fa-solid fa-ellipsis-vertical"></i>
+        </span>
+        <div class="dropdown" v-if="isDropdownOpen" ref="dropdownRef">
+          <ul class="dropdown-list">
+            <a-popconfirm
+              ref="popconfirmRef"
+              title="Are you sure to delete this task？"
+              ok-text="Yes"
+              cancel-text="No"
+              @confirm="confirm(task.id)"
+              @cancel="cancel"
+            >
+              <li class="dropdown-item">
+                <span class="sider-icon">
+                  <i class="fa-solid fa-trash"></i>
+                </span>
+                Delete
+              </li>
+            </a-popconfirm>
+          </ul>
+        </div>
+      </div>
+      <TrashDelete v-if="task.deleted" :id="task.id" />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { Task } from "../../models/task";
 import TaskWidgets from "./TaskWidgets.vue";
 import TaskDetail from "./TaskDetail.vue";
 import TrashDelete from "../Trash/TrashDelete.vue";
+import { Task } from "../../models/task";
 import { useStore } from "vuex";
 import { getTaskDetailService } from "../../services/taskServices";
-import { computed, onMounted, onUpdated, ref } from "vue";
+import { computed, onMounted, onUpdated, ref, onUnmounted } from "vue";
 import type { Ref } from "vue";
+import { onClickOutside } from "@vueuse/core";
+import { deleteTaskService } from "../../services/taskServices";
+import { toast } from "vue3-toastify";
 const store = useStore();
 const props = defineProps<{
   task: Task;
@@ -44,6 +71,10 @@ const taskItemRef = ref(null);
 const tasksSelected = computed(
   () => store.getters["tasksModule/getTasksSelected"]
 );
+const isDropdownOpen: Ref<Boolean> = ref(false);
+const dropdownRef = ref<HTMLElement | null>(null);
+const popconfirmRef = ref<HTMLElement | null>(null);
+const openDropdownBtnRef = ref<HTMLElement | null>(null);
 
 const getTaskDetail = (id: number) => {
   const taskDetail = getTaskDetailService(id);
@@ -55,6 +86,51 @@ const handleSelectItem = () => {
   store.dispatch("tasksModule/setTasksSelectedAction", props.task.id);
 };
 
+const openDropdown = () => {
+  isDropdownOpen.value = true;
+};
+
+const closeDropdown = () => {
+  isDropdownOpen.value = false;
+};
+
+const confirm = (id: number) => {
+  deleteTaskService(id);
+  toast("Deleted task successfully", {
+    theme: "colored",
+    type: "success",
+    dangerouslyHTMLString: false,
+  });
+  const tasksStorage = JSON.parse(localStorage.getItem("tasks"));
+  store.dispatch("tasksModule/setTasksAction", tasksStorage);
+};
+
+const cancel = () => {
+  closeDropdown();
+};
+
+const handleClickOutside = (event: MouseEvent) => {
+  const dropdownElement = dropdownRef.value;
+  const openDropdownBtnElement = openDropdownBtnRef.value;
+  const popconfirmElement = popconfirmRef.value;
+  if (
+    dropdownElement &&
+    !dropdownElement.contains(event.target as Node) &&
+    event.target !== openDropdownBtnElement &&
+    popconfirmElement &&
+    event.target !== popconfirmElement
+  ) {
+    closeDropdown();
+  }
+};
+
+onMounted(() => {
+  document.addEventListener("click", handleClickOutside);
+});
+
+onUnmounted(() => {
+  document.removeEventListener("click", handleClickOutside);
+});
 </script>
 
 <style>

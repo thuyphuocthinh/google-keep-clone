@@ -21,4 +21,7 @@ export default {
   resetTasksSelected(state: State) {
     state.tasksSelected = [];
   },
+  setTasksSearch(state: State, tasks: Task[]) {
+    state.tasksSearch = tasks;
+  },
 };

@@ -20,6 +20,7 @@
             ok-text="Yes"
             cancel-text="No"
             @confirm="handleDeleteTasks"
+            v-if="!showDeletedPermanent"
           >
             <span v-if="!showDeletedPermanent">
               <i class="fa-solid fa-trash"></i>
@@ -37,6 +38,7 @@
             ok-text="Yes"
             cancel-text="No"
             @confirm="handleDeleteTasksPermanently"
+            v-if="showDeletedPermanent"
           >
             <span v-if="showDeletedPermanent" title="Xóa vĩnh viễn">
               <i class="fa-solid fa-trash"></i>

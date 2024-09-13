@@ -118,7 +118,7 @@ onMounted(() => {
   }
   setTimeout(() => {
     isLoading.value = false;
-  }, 3000);
+  }, 1000);
 });
 
 // VueDraggable event handlers
