@@ -3,8 +3,16 @@ export interface Task {
   title: string;
   content: string;
   image?: string;
-  deadline: string;
+  backgroundColor?: string;
+  timeStart: string;
+  timeEnd: string;
+  label?: [];
   status: string;
+  createdBy: string; // creator's id
   createdAt: string;
-  deleted: string;
+  updatedAt?: string;
+  updatedBy?: string;
+  deleted: boolean;
+  deletedAt?: string;
+  deletedBy?: string;
 }

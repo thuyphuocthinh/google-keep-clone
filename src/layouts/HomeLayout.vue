@@ -17,14 +17,18 @@
 </template>
 
 <script lang="ts" setup>
-import { inject, computed } from "vue";
+import { inject, computed, ref } from "vue";
+import type { Ref } from "vue";
 import Header from "../components/Home/Header.vue";
 import Sidebar from "../components/Home/Sidebar.vue";
 import ToolBar from "../components/Home/ToolBar.vue";
 import { useStore } from "vuex";
+import Cookies from "js-cookie";
+import { TOKEN } from "../constants/index";
 const store = useStore();
-
 const isSiderFull = computed(() => store.state.sidebar.isSiderFull);
+const token: Ref<string> = ref(Cookies.get(TOKEN));
+
 </script>
 
 <style>

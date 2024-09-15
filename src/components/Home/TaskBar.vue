@@ -35,21 +35,50 @@
           ></textarea>
         </div>
         <div class="task-time mb-3">
-          <p>Deadline</p>
-          <input
-            type="datetime-local"
-            class="form-control"
-            id="birthdaytime"
-            name="birthdaytime"
+          <div class="d-flex align-items-center gap-2 task-time-start">
+            <p>Start</p>
+            <input
+              type="datetime-local"
+              class="form-control"
+              id="timeStart"
+              name="timeStart"
+              style="width: 200px"
+              v-model="task.timeStart"
+            />
+          </div>
+          <div class="task-time-end d-flex align-items-center gap-2">
+            <p>End</p>
+            <input
+              type="datetime-local"
+              class="form-control"
+              id="timeEnd"
+              name="timeEnd"
+              style="width: 200px"
+              v-model="task.timeEnd"
+            />
+          </div>
+        </div>
+        <div class="task-status form-group mb-3">
+          <label for="status">Status</label>
+          <select
+            name="status"
+            id="status"
+            v-model="task.status"
+            class="form-select"
             style="width: 200px"
-            v-model="task.deadline"
-            :min="today"
-            :value="today"
-          />
+          >
+            <option
+              v-for="(status, index) in statusList.value"
+              :key="index"
+              :value="status.code"
+            >
+              {{ status.title }}
+            </option>
+          </select>
         </div>
         <div class="task-tools">
           <TaskWidgets />
-          <div class="task-tools-right">
+          <div class="task-tools-right ms-auto">
             <button type="button" class="btn-create" @click="createNewTask">
               Tạo
             </button>
@@ -70,62 +99,80 @@ import { dateString } from "../../helpers/dateString";
 import { Task } from "../../models/task";
 import { validation } from "../../helpers/validation";
 import { toast } from "vue3-toastify";
-import { STATUS } from "../../constants/index";
+import { STATUS, STATUS_CODE } from "../../constants/index";
 import * as taskServices from "../../services/taskServices";
 import { useStore } from "vuex";
+import { taskServiceApi } from "../../services/taskServicesApi";
+import * as tasksHelper from "../../helpers/tasksHelper";
 const store = useStore();
 const { input, textarea } = useTextareaAutosize();
 const isShowTaskBarMain: Ref<Boolean> = ref(false);
 const taskTarget = ref(null);
 const today: Ref<string> = ref(new Date().toISOString().slice(0, 16));
+const userLogin = store.state.user.userLogin;
+const statusList: Ref<{ id: string; code: string }[]> = reactive([]);
+
+// handel get status list
+const getStatusList = async () => {
+  try {
+    const result = await taskServiceApi.getStatusList();
+    if (result.status === STATUS_CODE.SUCCESS && result.data.success) {
+      statusList.value = result.data.data;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 // handle create task
-
 const resetValues = () => {
   input.value = "";
   task = {
-    id: Date.now(),
     title: "",
     content: input.value,
     image: "",
-    deadline: today.value,
+    timeStart: today.value,
+    timeEnd: today.value,
+    label: [],
     status: STATUS.TODO,
-    deleted: false,
-    createdAt:
-      new Date().toLocaleDateString() + " - " + new Date().toLocaleTimeString(),
+    createdBy: userLogin.id,
   };
 };
 
 let task: Task = reactive({
-  id: Date.now(),
   title: "",
   content: input.value,
   image: "",
-  deadline: today.value,
+  timeStart: today.value,
+  timeEnd: today.value,
   status: STATUS.TODO,
-  deleted: false,
-  createdAt:
-    new Date().toLocaleDateString() + " - " + new Date().toLocaleTimeString(),
+  label: [],
+  createdBy: userLogin.id,
 });
 
 onUpdated(() => {
   task = { ...task, ["content"]: input.value };
+  console.log(task);
 });
 
-const createNewTask = () => {
-  const result = validation(task, ["title", "content", "deadline"]);
+onMounted(() => {
+  getStatusList();
+});
+
+const createNewTask = async () => {
+  const result = validation(task, ["title", "content"]);
   if (result.isValid) {
-    taskServices.createNewTaskService(task);
-    closeTaskBarMain();
-    const tasksStorage = JSON.parse(localStorage.getItem("tasks"));
-    store.dispatch("tasksModule/setTasksAction", tasksStorage);
+    const response = await taskServiceApi.createTask(task);
+    if (response.status === STATUS_CODE.SUCCESS && response.data.success) {
+      closeTaskBarMain();
+      tasksHelper.getTasksApi(userLogin.id, store);
+      toast.success(response.data.message);
+    } else {
+      toast.error(response.data.message);
+    }
   } else {
     const error = result.arrErrors.join(", ");
-    toast(error + " " + "cannot be empty", {
-      theme: "colored",
-      type: "error",
-      dangerouslyHTMLString: true,
-    });
+    toast.error(error + " " + "cannot be empty");
   }
 };
 
@@ -226,16 +273,27 @@ onClickOutside(taskTarget, () => closeTaskBarMain());
 .task-time {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   color: #606060;
   font-weight: 500;
   padding-left: 3px;
   gap: 20px;
 }
 
+.task-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #606060;
+  font-weight: 500;
+  padding-left: 3px;
+}
+
 .task-tools {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .task-tools-right button {

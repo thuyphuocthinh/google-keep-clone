@@ -6,6 +6,10 @@ import HomeLayout from "../layouts/HomeLayout.vue";
 import Homepage from "../pages/Home/Homepage.vue";
 import Trashpage from "../pages/Trash/Trashpage.vue";
 import Search from "../pages/Search/Search.vue";
+import { LOGIN, REGISTER, TOKEN } from "../constants";
+import { authService } from "../services/authService";
+import Cookies from "js-cookie";
+import { toast } from "vue3-toastify";
 
 const routes = [
   {
@@ -32,16 +36,16 @@ const routes = [
   {
     path: "/auth",
     component: AuthLayout,
-    redirect: { name: "login" }, // Redirect to the named 'login' route
+    redirect: { name: LOGIN }, // Redirect to the named 'login' route
     children: [
       {
         path: "login",
-        name: "login", // Add a name to the route
+        name: LOGIN, // Add a name to the route
         component: Login,
       },
       {
         path: "register",
-        name: "register", // Add a name to the route
+        name: REGISTER, // Add a name to the route
         component: Register,
       },
     ],
@@ -51,4 +55,17 @@ const routes = [
 export const router = createRouter({
   history: createWebHistory(),
   routes,
+});
+
+router.beforeEach(async (to: any, from: any, next: any) => {
+  const token: string = Cookies.get(TOKEN);
+  const result = await authService.verityToken(token);
+  const isAuthenticated = result.data.success;
+  if (to.name !== LOGIN && !isAuthenticated) {
+    next({ name: LOGIN });
+    Cookies.remove(TOKEN);
+    setTimeout(() => {
+      toast.error("Token is invalid or not provided. Please, log in to continue.");
+    }, 100);
+  } else next();
 });

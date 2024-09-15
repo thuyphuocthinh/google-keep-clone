@@ -5,6 +5,7 @@
     </div>
     <div v-else class="workspace-container">
       <div class="row mt-4">
+        <!--
         <div class="col-md-4 col-12 mb-md-0 mb-3">
           <div class="workspace-col">
             <h5>Todo</h5>
@@ -86,6 +87,38 @@
             </div>
           </div>
         </div>
+        -->
+        <div
+          v-for="(taskListByStatus, index) in tasks"
+          :key="index"
+          class="col-md-4 col-12 mb-md-0 mb-3"
+        >
+          <div class="workspace-col">
+            <h5>{{ taskListByStatus.status.toUpperCase() }}</h5>
+            <div class="col-content" :class="taskListByStatus.status">
+              <VueDraggable
+                class="d-flex flex-column gap-2 draggable-col"
+                ghostClass="ghost"
+                v-model="tasksTodo"
+                animation="150"
+                group="people"
+                :title="taskListByStatus.status"
+                @update="onUpdate"
+                @add="onAdd"
+                @remove="onRemove"
+                @start="onStart"
+                @end="onEnd"
+                @clone="onClone"
+                @change="onChange"
+                @move="onMove"
+              >
+                <div v-for="task in taskListByStatus.list" :key="task.id">
+                  <TaskItem :task="task" :status="task.status" />
+                </div>
+              </VueDraggable>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -100,15 +133,16 @@ import { changeTaskStatusService } from "../../services/taskServices";
 import type { Ref } from "vue";
 import { ref } from "vue";
 import Loading from "../Loading/Loading.vue";
+import { taskServiceApi } from "../../services/taskServicesApi";
+import { STATUS_CODE } from "../../constants/index";
+import * as tasksHelper from "../../helpers/tasksHelper";
 // Access the store instance
 const store = useStore();
-const tasksTodo = computed(() => store.getters["tasksModule/getTasksTodo"]);
-const tasksProgress = computed(
-  () => store.getters["tasksModule/getTasksProgress"]
-);
-const tasksDone = computed(() => store.getters["tasksModule/getTasksDone"]);
 const isLoading: Ref<Boolean> = ref(true);
-onMounted(() => {
+const userLogin = store.state.user.userLogin;
+const tasks = computed(() => store.getters["tasksModule/getAllTasks"]);
+
+const getTasksLocal = () => {
   if (!localStorage.getItem("tasks")) {
     localStorage.setItem("tasks", "[]");
   }
@@ -119,6 +153,11 @@ onMounted(() => {
   setTimeout(() => {
     isLoading.value = false;
   }, 1000);
+};
+
+onMounted(() => {
+  isLoading.value = false;
+  tasksHelper.getTasksApi(userLogin.id, store);
 });
 
 // VueDraggable event handlers

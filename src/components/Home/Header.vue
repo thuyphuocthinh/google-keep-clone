@@ -55,7 +55,24 @@
               <span>
                 <i class="fa-solid fa-grip"></i>
               </span>
-              <span> P </span>
+              <a-dropdown>
+                <a-avatar>
+                  <template #icon><UserOutlined /></template>
+                </a-avatar>
+                <template #overlay>
+                  <a-menu>
+                    <a-menu-item>
+                      <span> Hi, {{ userLogin.username }} </span>
+                    </a-menu-item>
+                    <a-menu-item>
+                      <a href="javascript:;">Profile</a>
+                    </a-menu-item>
+                    <a-menu-item>
+                      <span @click="handleLogout">Logout</span>
+                    </a-menu-item>
+                  </a-menu>
+                </template>
+              </a-dropdown>
             </div>
           </div>
         </div>
@@ -79,6 +96,9 @@ import type { Ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
 import { searchService } from "../../services/searchServices";
+import { UserOutlined } from "@ant-design/icons-vue";
+import Cookies from "js-cookie";
+import { TOKEN } from "../../constants/index";
 
 const store = useStore();
 const router = useRouter();
@@ -86,12 +106,19 @@ const route = useRoute();
 const isSiderFull = computed(() => store.state.sidebar.isSiderFull);
 const searchRef = ref(null);
 const idTimeOut: Ref<number> = ref(0);
+const userLogin = store.state.user.userLogin;
 
 const showFullSider = () => store.dispatch("sidebar/showFullSidebar");
 const showIconSider = () => store.dispatch("sidebar/showIconSidebar");
 const handleShowHideSidebar = () => {
   if (isSiderFull.value) showIconSider();
   else showFullSider();
+};
+
+const handleLogout = () => {
+  Cookies.remove(TOKEN);
+  router.push("/auth/login");
+  store.dispatch("user/setUserLogoutAction");
 };
 
 const handleScroll = (e: Event) => {

@@ -10,12 +10,6 @@
     </span>
     <div @click="getTaskDetail(task.id)">
       <div class="task-header">{{ task.title }}</div>
-      <div class="task-deadline">
-        <span>
-          <i class="fa-regular fa-clock"></i>
-        </span>
-        <span> {{ task.deadline }} </span>
-      </div>
       <div class="task-content">
         {{ task.content }}
       </div>
@@ -63,6 +57,8 @@ import type { Ref } from "vue";
 import { onClickOutside } from "@vueuse/core";
 import { deleteTaskService } from "../../services/taskServices";
 import { toast } from "vue3-toastify";
+import { taskServiceApi } from "../../services/taskServicesApi";
+import { STATUS_CODE } from "../../constants/index";
 const store = useStore();
 const props = defineProps<{
   task: Task;
@@ -76,10 +72,13 @@ const dropdownRef = ref<HTMLElement | null>(null);
 const popconfirmRef = ref<HTMLElement | null>(null);
 const openDropdownBtnRef = ref<HTMLElement | null>(null);
 
-const getTaskDetail = (id: number) => {
-  const taskDetail = getTaskDetailService(id);
-  store.dispatch("tasksModule/setTaskDetailAction", taskDetail);
-  store.dispatch("modal/openModalAction", TaskDetail);
+const getTaskDetail = async (id: string) => {
+  const result = await taskServiceApi.getTaskDetail(id);
+  if (result.status === STATUS_CODE.SUCCESS && result.data.success) {
+    const taskDetail = result.data.data;
+    store.dispatch("tasksModule/setTaskDetailAction", taskDetail);
+    store.dispatch("modal/openModalAction", TaskDetail);
+  }
 };
 
 const handleSelectItem = () => {
@@ -189,12 +188,6 @@ onUnmounted(() => {
   font-weight: 200;
   max-height: 300px;
   overflow-y: hidden;
-}
-
-.task-item .task-deadline {
-  display: flex;
-  font-size: 12px;
-  gap: 5px;
 }
 
 .task-widgets {

@@ -10,7 +10,8 @@
       "@/*": [
         "./src/*" // set path `@/*` as alias of `src/*`
       ]
-    }
+    },
+    "types": ["vue3-toastify/global"]
     /* other configs */
   }
 }

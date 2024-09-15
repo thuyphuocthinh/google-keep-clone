@@ -28,6 +28,18 @@
         </a-form-item>
 
         <a-form-item
+          label="Username"
+          name="username"
+          :rules="[{ required: true, message: 'Please input your username!' }]"
+        >
+          <a-input v-model:value="formState.username">
+            <template #prefix>
+              <UserOutlined class="site-form-item-icon" />
+            </template>
+          </a-input>
+        </a-form-item>
+
+        <a-form-item
           label="Password"
           name="password"
           :rules="[
@@ -55,7 +67,7 @@
               <LockOutlined class="site-form-item-icon" />
             </template>
           </a-input-password>
-          <p class="p-1 m-0" style="color: red;">
+          <p class="p-1 m-0" style="color: red">
             {{ handleConfirmPassword }}
           </p>
         </a-form-item>
@@ -66,14 +78,15 @@
             type="primary"
             html-type="submit"
             class="register-form-button"
+            :loading="loading"
           >
             Create
           </a-button>
 
           <div class="login-link">
             <span>Or</span>
-            <a-button type="default"> 
-                <router-link to="/auth/login">Login</router-link>
+            <a-button type="default">
+              <router-link to="/auth/login">Login</router-link>
             </a-button>
           </div>
         </a-form-item>
@@ -82,27 +95,78 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { reactive, computed } from "vue";
+import { reactive, computed, ref } from "vue";
 import { UserOutlined, LockOutlined } from "@ant-design/icons-vue";
-
+import { TOKEN } from "../../constants/index";
+import { toast } from "vue3-toastify";
+import { useRouter } from "vue-router";
+import type { Ref } from "vue";
+import { authService } from "../../services/authService";
+import Cookies from "js-cookie";
+import { useStore } from "vuex";
 interface FormState {
   layout: "horizontal" | "vertical" | "inline";
   email: string;
   password: string;
   confirmPassword: string;
-  remember: boolean;
+  username: string;
 }
+
+const store = useStore();
+const loading: Ref<Boolean> = ref(false);
+const router = useRouter();
 
 const formState = reactive<FormState>({
   email: "",
   password: "",
   confirmPassword: "",
-  remember: true,
+  username: "",
   layout: "vertical",
 });
 
 const onFinish = (values: any) => {
-  console.log("Success:", values);
+  try {
+    const user: {
+      email: string;
+      password: string;
+      username: string;
+    } = {
+      email: values.email,
+      password: values.password,
+      username: values.username,
+    };
+    loading.value = true;
+    setTimeout(async () => {
+      const result = await authService.registerService(user);
+      if (result.status === 200 && result.data.success) {
+        const data = result.data.data;
+        const token = data.token;
+        const user = {
+          id: data.id,
+          roleId: data.roleId,
+          email: data.email,
+          avatar: data.avatar,
+          username: data.username,
+        };
+        // store token to cookies
+        Cookies.set(TOKEN, token);
+        // dispatch user to reducer
+        store.dispatch("user/setUserLoginAction", user);
+        // push to homepage
+        router.push("/");
+        // toast
+        setTimeout(() => {
+          // toast
+          toast.success(result.data.message);
+        }, 100);
+      } else {
+        toast.error(result.data.message);
+      }
+      loading.value = false;
+    }, 1000);
+  } catch (error) {
+    console.log("Login error");
+  }
 };
 
 const onFinishFailed = (errorInfo: any) => {
@@ -110,11 +174,16 @@ const onFinishFailed = (errorInfo: any) => {
 };
 
 const disabled = computed(() => {
-  return !(formState.email && formState.password && formState.confirmPassword === formState.password);
+  return !(
+    formState.email &&
+    formState.password &&
+    formState.confirmPassword === formState.password
+  );
 });
 
 const handleConfirmPassword = computed(() => {
-  return formState.password !== formState.confirmPassword && formState.confirmPassword
+  return formState.password !== formState.confirmPassword &&
+    formState.confirmPassword
     ? "Password does not match!"
     : "";
 });
