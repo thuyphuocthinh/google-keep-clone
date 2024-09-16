@@ -22,7 +22,7 @@
             @confirm="handleDeleteTasks"
             v-if="!showDeletedPermanent"
           >
-            <span v-if="!showDeletedPermanent">
+            <span v-if="!showDeletedPermanent" title="Xóa">
               <i class="fa-solid fa-trash"></i>
             </span>
           </a-popconfirm>
@@ -62,12 +62,19 @@ import { toast } from "vue3-toastify";
 import type { Ref } from "vue";
 import { ref } from "vue";
 import { Task } from "../../models/task";
+import * as tasksHelper from "../../helpers/tasksHelper";
+
 const store = useStore();
 const tasksSelected = computed(
   () => store.getters["tasksModule/getTasksSelected"]
 );
-const showDeletedPermanent: Ref<Boolean> = ref(false);
+const showDeletedPermanent = computed(
+  () => store.getters["tasksModule/showDeletedPermanentIcon"]
+);
 const toolBarRef = ref(null);
+const userLogin = store.state.user.userLogin;
+
+// methods
 
 const handleClickOutside = (e: Event) => {
   let id = parseInt(e.target.getAttribute("id"));
@@ -85,66 +92,40 @@ const handleClickOutside = (e: Event) => {
   }
 };
 
-onMounted(() => {
-  document.addEventListener("click", handleClickOutside);
-});
-
-onUpdated(() => {
-  const tasksStorage = JSON.parse(localStorage.getItem("tasks"));
-  for (const id of tasksSelected.value) {
-    const find: Task = tasksStorage.find((task: Task) => task.id === id);
-    if (find.deleted) {
-      showDeletedPermanent.value = true;
-      break;
-    }
-  }
-  if (tasksSelected.value.length === 0) showDeletedPermanent.value = false;
-});
-
-onUnmounted(() => {
-  showDeletedPermanent.value = false;
-  removeEventListener("click", handleClickOutside);
-});
-
 const handleCloseToolBar = () => {
   store.dispatch("tasksModule/resetTasksSelectedAction");
 };
 
 const handleDeleteTasks = () => {
   if (tasksSelected.value.length > 0) {
-    deleteMultipleTasksService(tasksSelected.value);
-    store.dispatch("tasksModule/resetTasksSelectedAction");
-    const tasksStorage = JSON.parse(localStorage.getItem("tasks"));
-    store.dispatch("tasksModule/setTasksAction", tasksStorage);
-    toast("Deleted tasks successfully", {
-      theme: "colored",
-      type: "success",
-      dangerouslyHTMLString: false,
-    });
+    tasksHelper.deleteManyTaskApi(userLogin.id, store, tasksSelected.value);
   }
 };
 
 const handleDeleteTasksPermanently = () => {
   if (tasksSelected.value.length > 0) {
-    for (const id of tasksSelected.value) {
-      deleteTaskPermanentlyService(id);
-    }
+    tasksHelper.deleteManyTaskPermanently(
+      userLogin.id,
+      tasksSelected.value,
+      store
+    );
   }
-  store.dispatch("tasksModule/resetTasksSelectedAction");
-  const tasksStorage = JSON.parse(localStorage.getItem("tasks"));
-  store.dispatch("tasksModule/setTasksAction", tasksStorage);
 };
 
 const handleRecoverTasks = () => {
   if (tasksSelected.value.length > 0) {
-    for (const id of tasksSelected.value) {
-      recoverTaskService(id);
-    }
+    tasksHelper.recoverManyTask(tasksSelected.value, userLogin.id, store);
   }
-  store.dispatch("tasksModule/resetTasksSelectedAction");
-  const tasksStorage = JSON.parse(localStorage.getItem("tasks"));
-  store.dispatch("tasksModule/setTasksAction", tasksStorage);
 };
+
+// life cycle hooks
+onMounted(() => {
+  document.addEventListener("click", handleClickOutside);
+});
+
+onUnmounted(() => {
+  removeEventListener("click", handleClickOutside);
+});
 </script>
 
 <style>

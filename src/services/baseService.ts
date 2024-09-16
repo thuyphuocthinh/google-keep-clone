@@ -34,7 +34,7 @@ export class BaseService {
   }
 
   patch(api: string, data: {}) {
-    return axios.put(api, data, {
+    return axios.patch(api, data, {
       headers: {
         Authorization: `BEARER ${token}`,
         "Content-Type": "application/json",
@@ -42,11 +42,65 @@ export class BaseService {
     });
   }
 
-  delete(api: string) {
+  deletePermanently(api: string) {
     return axios.delete(api, {
       headers: {
         Authorization: `BEARER ${token}`,
       },
     });
+  }
+
+  deleteManyTasksPermanentlyBase(api: string, listTaskId: string[]) {
+    return axios.patch(
+      api,
+      {
+        listTaskId: listTaskId,
+      },
+      {
+        headers: {
+          Authorization: `BEARER ${token}`,
+        },
+      }
+    );
+  }
+
+  deleteTemporarily(api: string) {
+    return axios.patch(
+      api,
+      {},
+      {
+        headers: {
+          Authorization: `BEARER ${token}`,
+        },
+      }
+    );
+  }
+
+  deleteManyTasksTemporarily(api: string, listTaskId: string[]) {
+    return axios.patch(
+      api,
+      {
+        listTaskId: listTaskId,
+      },
+      {
+        headers: {
+          Authorization: `BEARER ${token}`,
+        },
+      }
+    );
+  }
+
+  recoverManyTasksBase(api: string, listTaskId: string[]) {
+    return axios.patch(
+      api,
+      {
+        listTaskId: listTaskId,
+      },
+      {
+        headers: {
+          Authorization: `BEARER ${token}`,
+        },
+      }
+    );
   }
 }

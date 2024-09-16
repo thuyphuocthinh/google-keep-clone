@@ -156,8 +156,10 @@ const getTasksLocal = () => {
 };
 
 onMounted(() => {
-  isLoading.value = false;
   tasksHelper.getTasksApi(userLogin.id, store);
+  setTimeout(() => {
+    isLoading.value = false;
+  }, 1500);
 });
 
 // VueDraggable event handlers

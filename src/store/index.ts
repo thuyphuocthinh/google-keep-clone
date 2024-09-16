@@ -4,6 +4,7 @@ import tasksModule from "./modules/tasks";
 import modal from "./modules/modal";
 import user from "./modules/user";
 import createPersistedState from "vuex-persistedstate";
+import loading from "./modules/loading";
 
 const userState = createPersistedState({
   paths: ["user"],
@@ -16,6 +17,7 @@ export default createStore({
     tasksModule: tasksModule,
     modal,
     user,
+    loading,
   },
   plugins: [userState],
 });

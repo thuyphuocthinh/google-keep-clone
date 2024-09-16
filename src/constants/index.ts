@@ -6,9 +6,17 @@ export enum STATUS {
 
 export const TOKEN: string = "TOKEN";
 export const DOMAIN: string = "http://localhost:3000/api/v1";
-export const LOGIN: string = "LOGIN";
-export const REGISTER: string = "REGISTER";
+
+export const PAGE = {
+  LOGIN: "LOGIN",
+  REGISTER: "REGISTER",
+  HOMEPAGE: "HOMEPAGE",
+  NOTFOUND: "NOTFOUND",
+  TRASH: "TRASH",
+  SEARCH: "SEARCH",
+};
 
 export enum STATUS_CODE {
   SUCCESS = 200,
+  ERROR = 400,
 }

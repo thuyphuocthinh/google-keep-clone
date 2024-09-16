@@ -20,23 +20,23 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted } from "vue";
+import { computed, onMounted, onUnmounted } from "vue";
 import { useStore } from "vuex";
 import TaskItem from "../../components/Home/TaskItem.vue";
+import * as tasksHelper from "../../helpers/tasksHelper";
 const store = useStore();
+const userLogin = store.state.user.userLogin;
 
 const tasksDeleted = computed(
   () => store.getters["tasksModule/getTasksDeleted"]
 );
 
 onMounted(() => {
-  if (!localStorage.getItem("tasks")) {
-    localStorage.setItem("tasks", "[]");
-  }
-  const tasksStorage = JSON.parse(localStorage.getItem("tasks") || "[]");
-  if (tasksStorage.length > 0) {
-    store.dispatch("tasksModule/setTasksAction", tasksStorage);
-  }
+  tasksHelper.getTasksDeleted(userLogin.id, store);
+});
+
+onUnmounted(() => {
+  store.dispatch("tasksModule/setShowDeletedPermanentIconAction");
 });
 </script>
 

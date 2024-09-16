@@ -1,7 +1,7 @@
-import { Task } from "../../../models/task";
+import { Task, TaskStatus, TasksByStatus } from "../../../models/task";
 
 export default {
-  async setTasksAction({ commit }: any, tasks: Task[]) {
+  setTasksAction({ commit }: any, tasks: TasksByStatus[]) {
     commit("setTasks", tasks);
   },
   setTaskDetailAction({ commit }: any, taskDetail: Task) {
@@ -15,5 +15,14 @@ export default {
   },
   setTasksSearchAction({ commit }: any, tasks: Task[]) {
     commit("setTasksSearch", tasks);
+  },
+  setStatusListAction({ commit }: any, statusList: TaskStatus[]) {
+    commit("setStatusList", statusList);
+  },
+  setDeletedTasksAction({ commit }: any, tasks: Task[]) {
+    commit("setDeletedTask", tasks);
+  },
+  setShowDeletedPermanentIconAction({ commit }: any) {
+    commit("setShowDeletedPermanentIcon");
   },
 };

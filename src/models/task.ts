@@ -16,3 +16,13 @@ export interface Task {
   deletedAt?: string;
   deletedBy?: string;
 }
+
+export interface TaskStatus {
+  id: string;
+  code: string;
+}
+
+export interface TasksByStatus {
+  status: string;
+  list: Task[];
+}

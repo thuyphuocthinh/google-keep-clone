@@ -11,20 +11,57 @@
       />
     </div>
     <div class="task-deadline">
-      <span>
-        <i class="fa-regular fa-clock"></i>
-        Deadline
-      </span>
-      <input
-        type="datetime-local"
-        class="form-control"
-        id="birthdaytime"
-        name="birthdaytime"
+      <div class="task-timeStart">
+        <span>
+          <i class="fa-regular fa-clock"></i>
+          Start
+        </span>
+        <input
+          type="datetime-local"
+          class="form-control"
+          id="birthdaytime"
+          name="birthdaytime"
+          style="width: 200px"
+          v-model="taskUpdate.timeStart"
+          :min="today"
+          :disabled="taskDetail.deleted"
+        />
+      </div>
+      <div class="task-timeEnd">
+        <span>
+          <i class="fa-regular fa-clock"></i>
+          End
+        </span>
+        <input
+          type="datetime-local"
+          class="form-control"
+          id="birthdaytime"
+          name="birthdaytime"
+          style="width: 200px"
+          v-model="taskUpdate.timeEnd"
+          :min="today"
+          :disabled="taskDetail.deleted"
+        />
+      </div>
+    </div>
+    <div class="task-status form-group my-3">
+      <label for="status">Status</label>
+      <select
+        name="status"
+        id="status"
+        v-model="taskUpdate.status"
+        class="form-select"
         style="width: 200px"
-        v-model="taskUpdate.deadline"
-        :min="today"
         :disabled="taskDetail.deleted"
-      />
+      >
+        <option
+          v-for="(status, index) in statusList"
+          :key="index"
+          :value="status.code"
+        >
+          {{ status.title }}
+        </option>
+      </select>
     </div>
     <div class="task-content">
       <span>
@@ -43,7 +80,9 @@
     </div>
     <div v-if="!taskDetail.deleted" class="task-button">
       <a-button type="default" @click="cancel">Cancel</a-button>
-      <a-button type="primary" @click="updateTask">Save changes</a-button>
+      <a-button type="primary" @click="updateTaskApi" :loading="showLoading"
+        >Save changes</a-button
+      >
     </div>
   </div>
 </template>
@@ -56,25 +95,33 @@ import { useTextareaAutosize } from "@vueuse/core";
 import { validation } from "../../helpers/validation";
 import { toast } from "vue3-toastify";
 import { updateTaskService } from "../../services/taskServices";
+import * as tasksHelper from "../../helpers/tasksHelper";
+import { LoadingOutlined } from "@ant-design/icons-vue";
+import { taskServiceApi } from "../../services/taskServicesApi";
+import { STATUS_CODE } from "../../constants/index";
 const { input, textarea } = useTextareaAutosize();
 const today: Ref<string> = ref(new Date().toISOString().slice(0, 16));
-
 const store = useStore();
 const taskDetail = computed(() => store.state.tasksModule.taskDetail);
+const showLoading = computed(() => store.getters["loading/getLoadingState"]);
+const statusList = computed(() => store.getters["tasksModule/getStatusList"]);
 
 let taskUpdate: Task = reactive({
   id: taskDetail.value.id,
   title: taskDetail.value.title,
   content: taskDetail.value.content,
   image: taskDetail.value.image,
-  deadline: taskDetail.value.deadline,
-  status: taskDetail.value.status,
+  timeStart: taskDetail.value.timeStart.slice(0, 16),
+  timeEnd: taskDetail.value.timeEnd.slice(0, 16),
   deleted: taskDetail.value.deleted,
-  createdAt: taskDetail.value.createdAt,
+  status: taskDetail.value.status,
+  label: taskDetail.value.label,
+  createdBy: taskDetail.value.createdBy,
 });
 
 onMounted(() => {
   input.value = taskDetail.value.content;
+  tasksHelper.getStatusListApi(store);
 });
 
 onUpdated(() => {
@@ -103,6 +150,26 @@ const updateTask = () => {
   }
 };
 
+const updateTaskApi = async () => {
+  try {
+    const result = validation(taskUpdate, [
+      "title",
+      "content",
+      "timeStart",
+      "timeEnd",
+      "status",
+    ]);
+    if (result.isValid) {
+      await tasksHelper.updateTaskApi(taskUpdate, store);
+    } else {
+      const error = result.arrErrors.join(", ");
+      toast.error(error);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const cancel = () => {
   store.dispatch("modal/closeModalAction");
 };
@@ -119,7 +186,7 @@ const cancel = () => {
 .task-detail .task-header {
   font-weight: bold;
   font-size: 16px;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 }
 
 .task-detail .task-header input {
@@ -127,7 +194,7 @@ const cancel = () => {
   outline: none;
   border: none;
   height: 30px;
-  font-size: 16px;
+  font-size: 18px;
   color: #606060;
   font-weight: 500;
 }
@@ -136,6 +203,17 @@ const cancel = () => {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
+}
+
+.task-detail .task-deadline div {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.task-detail .task-deadline div span {
+  font-weight: 500;
 }
 
 .task-detail .task-content {

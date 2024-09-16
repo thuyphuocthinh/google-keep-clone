@@ -68,7 +68,7 @@
             style="width: 200px"
           >
             <option
-              v-for="(status, index) in statusList.value"
+              v-for="(status, index) in statusList"
               :key="index"
               :value="status.code"
             >
@@ -92,7 +92,7 @@
 
 <script setup lang="ts">
 import TaskWidgets from "./TaskWidgets.vue";
-import { onMounted, onUnmounted, reactive, ref, onUpdated } from "vue";
+import { onMounted, onUnmounted, reactive, ref, onUpdated, computed } from "vue";
 import type { Ref } from "vue";
 import { useTextareaAutosize, onClickOutside } from "@vueuse/core";
 import { dateString } from "../../helpers/dateString";
@@ -110,19 +110,7 @@ const isShowTaskBarMain: Ref<Boolean> = ref(false);
 const taskTarget = ref(null);
 const today: Ref<string> = ref(new Date().toISOString().slice(0, 16));
 const userLogin = store.state.user.userLogin;
-const statusList: Ref<{ id: string; code: string }[]> = reactive([]);
-
-// handel get status list
-const getStatusList = async () => {
-  try {
-    const result = await taskServiceApi.getStatusList();
-    if (result.status === STATUS_CODE.SUCCESS && result.data.success) {
-      statusList.value = result.data.data;
-    }
-  } catch (error) {
-    console.log(error);
-  }
-};
+const statusList = computed(() => store.getters["tasksModule/getStatusList"]);
 
 // handle create task
 const resetValues = () => {
@@ -152,11 +140,10 @@ let task: Task = reactive({
 
 onUpdated(() => {
   task = { ...task, ["content"]: input.value };
-  console.log(task);
 });
 
 onMounted(() => {
-  getStatusList();
+  tasksHelper.getStatusListApi(store);
 });
 
 const createNewTask = async () => {

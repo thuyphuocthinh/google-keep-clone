@@ -27,7 +27,7 @@
               title="Are you sure to delete this task？"
               ok-text="Yes"
               cancel-text="No"
-              @confirm="confirm(task.id)"
+              @confirm="deleteTask(task.id, task.createdBy)"
               @cancel="cancel"
             >
               <li class="dropdown-item">
@@ -59,6 +59,8 @@ import { deleteTaskService } from "../../services/taskServices";
 import { toast } from "vue3-toastify";
 import { taskServiceApi } from "../../services/taskServicesApi";
 import { STATUS_CODE } from "../../constants/index";
+import * as tasksHelper from "../../helpers/tasksHelper";
+
 const store = useStore();
 const props = defineProps<{
   task: Task;
@@ -72,6 +74,7 @@ const dropdownRef = ref<HTMLElement | null>(null);
 const popconfirmRef = ref<HTMLElement | null>(null);
 const openDropdownBtnRef = ref<HTMLElement | null>(null);
 
+// methods
 const getTaskDetail = async (id: string) => {
   const result = await taskServiceApi.getTaskDetail(id);
   if (result.status === STATUS_CODE.SUCCESS && result.data.success) {
@@ -93,15 +96,8 @@ const closeDropdown = () => {
   isDropdownOpen.value = false;
 };
 
-const confirm = (id: number) => {
-  deleteTaskService(id);
-  toast("Deleted task successfully", {
-    theme: "colored",
-    type: "success",
-    dangerouslyHTMLString: false,
-  });
-  const tasksStorage = JSON.parse(localStorage.getItem("tasks"));
-  store.dispatch("tasksModule/setTasksAction", tasksStorage);
+const deleteTask = (taskId: string, userId: string) => {
+  tasksHelper.deleteTaskApi(store, taskId, userId);
 };
 
 const cancel = () => {
@@ -123,6 +119,7 @@ const handleClickOutside = (event: MouseEvent) => {
   }
 };
 
+// life cycle hooks
 onMounted(() => {
   document.addEventListener("click", handleClickOutside);
 });

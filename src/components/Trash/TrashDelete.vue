@@ -23,32 +23,20 @@ import {
   recoverTaskService,
 } from "../../services/taskServices";
 import { useStore } from "vuex";
+import * as tasksHelper from "../../helpers/tasksHelper";
 
 const store = useStore();
+const userLogin = store.state.user.userLogin;
 const props = defineProps<{
-  id: number;
+  id: string;
 }>();
 
 const handleRecoverTask = () => {
-  recoverTaskService(props.id);
-  const tasksStorage = JSON.parse(localStorage.getItem("tasks"));
-  store.dispatch("tasksModule/setTasksAction", tasksStorage);
-  toast("Recovered task successfully", {
-    theme: "colored",
-    type: "success",
-    dangerouslyHTMLString: false,
-  });
+  tasksHelper.recoverOneTask(props.id, userLogin.id, store);
 };
 
 const handleDeletePermanently = () => {
-  deleteTaskPermanentlyService(props.id);
-  const tasksStorage = JSON.parse(localStorage.getItem("tasks"));
-  store.dispatch("tasksModule/setTasksAction", tasksStorage);
-  toast("Deleted task permenantly successfully", {
-    theme: "colored",
-    type: "success",
-    dangerouslyHTMLString: false,
-  });
+  tasksHelper.deleteTaskPermanently(userLogin.id, props.id, store);
 };
 </script>
 

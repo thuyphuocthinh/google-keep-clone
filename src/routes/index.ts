@@ -6,7 +6,7 @@ import HomeLayout from "../layouts/HomeLayout.vue";
 import Homepage from "../pages/Home/Homepage.vue";
 import Trashpage from "../pages/Trash/Trashpage.vue";
 import Search from "../pages/Search/Search.vue";
-import { LOGIN, REGISTER, TOKEN } from "../constants";
+import { PAGE, TOKEN } from "../constants";
 import { authService } from "../services/authService";
 import Cookies from "js-cookie";
 import { toast } from "vue3-toastify";
@@ -18,17 +18,17 @@ const routes = [
     children: [
       {
         path: "",
-        name: "homepage",
+        name: PAGE.HOMEPAGE,
         component: Homepage,
       },
       {
         path: "trash",
-        name: "trash",
+        name: PAGE.TRASH,
         component: Trashpage,
       },
       {
         path: "search",
-        name: "search",
+        name: PAGE.SEARCH,
         component: Search,
       },
     ],
@@ -36,19 +36,24 @@ const routes = [
   {
     path: "/auth",
     component: AuthLayout,
-    redirect: { name: LOGIN }, // Redirect to the named 'login' route
+    redirect: { name: PAGE.LOGIN }, // Redirect to the named 'login' route
     children: [
       {
         path: "login",
-        name: LOGIN, // Add a name to the route
+        name: PAGE.LOGIN, // Add a name to the route
         component: Login,
       },
       {
         path: "register",
-        name: REGISTER, // Add a name to the route
+        name: PAGE.REGISTER, // Add a name to the route
         component: Register,
       },
     ],
+  },
+  {
+    path: "/:pathMatch(.*)*",
+    name: PAGE.NOTFOUND,
+    component: Homepage,
   },
 ];
 
@@ -61,11 +66,27 @@ router.beforeEach(async (to: any, from: any, next: any) => {
   const token: string = Cookies.get(TOKEN);
   const result = await authService.verityToken(token);
   const isAuthenticated = result.data.success;
-  if (to.name !== LOGIN && !isAuthenticated) {
-    next({ name: LOGIN });
+  if (
+    (to.name === PAGE.LOGIN && isAuthenticated) ||
+    (to.name === PAGE.REGISTER && isAuthenticated)
+  ) {
+    next({ name: PAGE.HOMEPAGE });
+    return;
+  }
+  if (to.name === PAGE.NOTFOUND) {
+    if (isAuthenticated) next({ name: PAGE.HOMEPAGE });
+    else {
+      next({ name: PAGE.LOGIN });
+      Cookies.remove(TOKEN);
+    }
+  }
+  if (to.name !== PAGE.LOGIN && !isAuthenticated) {
+    next({ name: PAGE.LOGIN });
     Cookies.remove(TOKEN);
     setTimeout(() => {
-      toast.error("Token is invalid or not provided. Please, log in to continue.");
+      toast.error(
+        "Token is invalid or not provided. Please, log in to continue."
+      );
     }, 100);
   } else next();
 });
