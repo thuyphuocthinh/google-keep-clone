@@ -99,10 +99,10 @@
               <VueDraggable
                 class="d-flex flex-column gap-2 draggable-col"
                 ghostClass="ghost"
-                v-model="tasksTodo"
                 animation="150"
-                group="people"
-                :title="taskListByStatus.status"
+                v-model="taskListByStatus.list"
+                group="tasks"
+                :title="taskListByStatus.statusCode"
                 @update="onUpdate"
                 @add="onAdd"
                 @remove="onRemove"
@@ -129,34 +129,20 @@ import { computed, onBeforeMount, onMounted } from "vue";
 import { useStore } from "vuex";
 import TaskItem from "./TaskItem.vue";
 import { VueDraggable, DraggableEvent } from "vue-draggable-plus";
-import { changeTaskStatusService } from "../../services/taskServices";
 import type { Ref } from "vue";
 import { ref } from "vue";
 import Loading from "../Loading/Loading.vue";
 import { taskServiceApi } from "../../services/taskServicesApi";
 import { STATUS_CODE } from "../../constants/index";
-import * as tasksHelper from "../../helpers/tasksHelper";
+import * as noteHelper from "../../helpers/noteHelper";
 // Access the store instance
 const store = useStore();
 const isLoading: Ref<Boolean> = ref(true);
 const userLogin = store.state.user.userLogin;
 const tasks = computed(() => store.getters["tasksModule/getAllTasks"]);
 
-const getTasksLocal = () => {
-  if (!localStorage.getItem("tasks")) {
-    localStorage.setItem("tasks", "[]");
-  }
-  const tasksStorage = JSON.parse(localStorage.getItem("tasks") || "[]");
-  if (tasksStorage.length > 0) {
-    store.dispatch("tasksModule/setTasksAction", tasksStorage);
-  }
-  setTimeout(() => {
-    isLoading.value = false;
-  }, 1000);
-};
-
 onMounted(() => {
-  tasksHelper.getTasksApi(userLogin.id, store);
+  noteHelper.getNotesHelper(store);
   setTimeout(() => {
     isLoading.value = false;
   }, 1500);
@@ -183,9 +169,13 @@ function onAdd(event: DraggableEvent) {
   const id: number = event.clonedData.id;
   const oldStatus: string = event.from.title;
   const newStatus: string = event.to.title;
-  changeTaskStatusService(id, oldStatus, newStatus);
-  const tasksStorage = JSON.parse(localStorage.getItem("tasks"));
-  store.dispatch("tasksModule/setTasksAction", tasksStorage);
+  console.log("oldStatus: ", oldStatus);
+  console.log("newStatus: ", newStatus);
+  const taskUpdate = {
+    taskId: id,
+    newStatusCode: newStatus,
+  };
+  tasksHelper.changeStatus(userLogin.id, taskUpdate, store);
   // console.log("Change status successfully");
   // console.log("---------------------");
 }
@@ -204,8 +194,6 @@ function onMove(event: MoveEvent, originalEvent: Event) {}
 </script>
 
 <style>
-.workspace {
-}
 
 .workspace-container {
   max-width: 1000px;

@@ -6,10 +6,8 @@ import HomeLayout from "../layouts/HomeLayout.vue";
 import Homepage from "../pages/Home/Homepage.vue";
 import Trashpage from "../pages/Trash/Trashpage.vue";
 import Search from "../pages/Search/Search.vue";
-import { PAGE, TOKEN } from "../constants";
-import { authService } from "../services/authService";
-import Cookies from "js-cookie";
-import { toast } from "vue3-toastify";
+import { PAGE} from "../constants";
+import { getAccessToken, removeAccessToken, removeRefreshToken } from '../helpers/getToken';
 
 const routes = [
   {
@@ -63,30 +61,13 @@ export const router = createRouter({
 });
 
 router.beforeEach(async (to: any, from: any, next: any) => {
-  const token: string = Cookies.get(TOKEN);
-  const result = await authService.verityToken(token);
-  const isAuthenticated = result.data.success;
-  if (
-    (to.name === PAGE.LOGIN && isAuthenticated) ||
-    (to.name === PAGE.REGISTER && isAuthenticated)
-  ) {
-    next({ name: PAGE.HOMEPAGE });
-    return;
+  const accessToken: string = getAccessToken();
+  if(to.name === PAGE.LOGIN && accessToken || to.name === PAGE.REGISTER && accessToken) {
+    return next({name: PAGE.HOMEPAGE});
   }
-  if (to.name === PAGE.NOTFOUND) {
-    if (isAuthenticated) next({ name: PAGE.HOMEPAGE });
-    else {
-      next({ name: PAGE.LOGIN });
-      Cookies.remove(TOKEN);
-    }
-  }
-  if (to.name !== PAGE.LOGIN && !isAuthenticated) {
+  if (to.name !== PAGE.LOGIN && !accessToken) {
     next({ name: PAGE.LOGIN });
-    Cookies.remove(TOKEN);
-    setTimeout(() => {
-      toast.error(
-        "Token is invalid or not provided. Please, log in to continue."
-      );
-    }, 100);
+    removeAccessToken();
+    removeRefreshToken();
   } else next();
 });

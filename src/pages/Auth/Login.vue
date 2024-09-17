@@ -8,7 +8,7 @@
         class="login-form"
         @finish="onFinish"
         @finishFailed="onFinishFailed"
-        :layout="formState.layout"
+        layout="vertical"
       >
         <a-form-item
           label="Email"
@@ -31,7 +31,16 @@
         <a-form-item
           label="Password"
           name="password"
-          :rules="[{ required: true, message: 'Please input your password!' }]"
+          :rules="[
+            { required: true, message: 'Please input your password!' },
+            {
+              pattern: new RegExp(
+                '(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z\\d]).{8,32}'
+              ),
+              message:
+                'Minimum eight characters, at least one uppercase letter, one lowercase letter, one digit and one special character',
+            },
+          ]"
         >
           <a-input-password v-model:value="formState.password">
             <template #prefix>
@@ -62,6 +71,7 @@
     </div>
   </div>
 </template>
+
 <script lang="ts" setup>
 import { reactive, computed, ref } from "vue";
 import type { Ref } from "vue";
@@ -72,89 +82,70 @@ import {
   UserOutlined,
   LockOutlined,
 } from "@ant-design/icons-vue";
-import { TOKEN } from "../../constants/index";
+import { TOKEN, ACCESS_TOKEN, REFRESH_TOKEN } from "../../constants/index";
 import { toast } from "vue3-toastify";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
-interface FormState {
-  layout: "horizontal" | "vertical" | "inline";
-  email: string;
-  password: string;
-}
+import { USER_SIGN_IN } from "../../models/user";
+import { authServiceSuco } from "../../services/authServiceSuco";
+import { STATUS_CODE } from "../../constants/index";
+
 const loading: Ref<Boolean> = ref(false);
 const router = useRouter();
 const store = useStore();
-const formState = reactive<FormState>({
+const formState = reactive<USER_SIGN_IN>({
   email: "",
   password: "",
-  layout: "vertical",
 });
 
 const onFinish = (values: any) => {
-  try {
-    const user: {
-      email: string;
-      password: string;
-    } = {
-      email: values.email,
-      password: values.password,
-    };
-    loading.value = true;
-    setTimeout(async () => {
-      const result = await authService.loginService(user);
-      if (result.status === 200 && result.data.success) {
-        const data = result.data.data;
-        const token = data.token;
-        const user = {
-          id: data.id,
-          roleId: data.roleId,
-          email: data.email,
-          avatar: data.avatar,
-          username: data.username,
-        };
-        // store token to cookies
-        Cookies.set(TOKEN, token);
-        // dispatch user to reducer
-        store.dispatch("user/setUserLoginAction", user);
-        // push to homepage
+  const user: USER_SIGN_IN = {
+    email: values.email,
+    password: values.password,
+  };
+  loading.value = true;
+  setTimeout(async () => {
+    try {
+      const result = await authServiceSuco.loginService(user);
+      const data: string = result.data.status;
+      const statusCode: number = result.status;
+      const access_token: string = result.data.data.access_token;
+      const refresh_token: string = result.data.data.refresh_token;
+      if (result.status === STATUS_CODE.SUCCESS) {
+        // Cookies
+        Cookies.set(ACCESS_TOKEN, access_token);
+        Cookies.set(REFRESH_TOKEN, refresh_token);
+        // router
         router.push("/");
+        // toast
         setTimeout(() => {
-          // toast
-          toast.success(result.data.message);
-        }, 100);
-      } else {
-        toast.error(result.data.message);
+          toast.success("Login success!");
+        }, 200);
       }
-      loading.value = false;
-    }, 1000);
-  } catch (error) {
-    console.log("Login error");
-  }
+    } catch (error) {
+      const message: string = error.data.error.message;
+      toast.error(message);
+    }
+    loading.value = false;
+  }, 1000);
 };
 
 const onFinishFailed = (errorInfo: any) => {
   console.log("Failed:", errorInfo);
 };
+
 const disabled = computed(() => {
   return !(formState.email && formState.password);
 });
 </script>
 <style scoped>
-#components-form-demo-normal-login .login-form {
-  max-width: 300px;
-}
-#components-form-demo-normal-login .login-form-forgot {
-  float: right;
-}
-#components-form-demo-normal-login .login-form-button {
-  width: 100%;
-}
 .form {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100%;
 }
+
 .form-container {
   max-width: 400px;
   width: 95%;

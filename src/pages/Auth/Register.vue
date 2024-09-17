@@ -7,7 +7,7 @@
         class="register-form"
         @finish="onFinish"
         @finishFailed="onFinishFailed"
-        :layout="formState.layout"
+        layout="vertical"
       >
         <a-form-item
           label="Email"
@@ -28,11 +28,43 @@
         </a-form-item>
 
         <a-form-item
-          label="Username"
-          name="username"
-          :rules="[{ required: true, message: 'Please input your username!' }]"
+          label="FirstName"
+          name="firstname"
+          :rules="[
+            { required: true, message: 'Please input your FirstName!' },
+            {
+              min: 1,
+              message: 'Min length is 1',
+            },
+            {
+              max: 100,
+              message: 'Max length is 100',
+            },
+          ]"
         >
-          <a-input v-model:value="formState.username">
+          <a-input v-model:value="formState.firstname">
+            <template #prefix>
+              <UserOutlined class="site-form-item-icon" />
+            </template>
+          </a-input>
+        </a-form-item>
+
+        <a-form-item
+          label="LastName"
+          name="lastname"
+          :rules="[
+            { required: true, message: 'Please input your LastName!' },
+            {
+              min: 1,
+              message: 'Min length is 1',
+            },
+            {
+              max: 100,
+              message: 'Max length is 100',
+            },
+          ]"
+        >
+          <a-input v-model:value="formState.lastname">
             <template #prefix>
               <UserOutlined class="site-form-item-icon" />
             </template>
@@ -45,8 +77,11 @@
           :rules="[
             { required: true, message: 'Please input your password!' },
             {
-              min: 8,
-              message: 'Min length is 8',
+              pattern: new RegExp(
+                '(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z\\d]).{8,32}'
+              ),
+              message:
+                'Minimum eight characters, at least one uppercase letter, one lowercase letter, one digit and one special character',
             },
           ]"
         >
@@ -59,10 +94,10 @@
 
         <a-form-item
           label="Confirm password"
-          name="confirmPassword"
+          name="password_confirmation"
           :rules="[{ required: true, message: 'Please confirm password!' }]"
         >
-          <a-input-password v-model:value="formState.confirmPassword">
+          <a-input-password v-model:value="formState.password_confirmation">
             <template #prefix>
               <LockOutlined class="site-form-item-icon" />
             </template>
@@ -72,6 +107,22 @@
           </p>
         </a-form-item>
 
+        <a-form-item
+          label="Role"
+          name="role"
+          :rules="[{ required: true, message: 'Please select a role!' }]"
+        >
+          <a-select
+            v-model:value="formState.role"
+            show-search
+            placeholder="Select a person"
+            :options="options"
+            :filter-option="filterOption"
+            @focus="handleFocus"
+            @blur="handleBlur"
+            @change="handleChange"
+          ></a-select>
+        </a-form-item>
         <a-form-item>
           <a-button
             :disabled="disabled"
@@ -101,72 +152,56 @@ import { TOKEN } from "../../constants/index";
 import { toast } from "vue3-toastify";
 import { useRouter } from "vue-router";
 import type { Ref } from "vue";
-import { authService } from "../../services/authService";
+import { authServiceSuco } from "../../services/authServiceSuco";
 import Cookies from "js-cookie";
 import { useStore } from "vuex";
-interface FormState {
-  layout: "horizontal" | "vertical" | "inline";
-  email: string;
-  password: string;
-  confirmPassword: string;
-  username: string;
-}
+import type { SelectProps } from "ant-design-vue";
+import { ROLE } from "../../constants/index";
+import { USER_SIGN_UP } from "../../models/user";
+import { STATUS_CODE, STATUS_TEXT } from "../../constants/index";
 
 const store = useStore();
 const loading: Ref<Boolean> = ref(false);
 const router = useRouter();
 
-const formState = reactive<FormState>({
+const options = ref<SelectProps["options"]>([
+  { value: ROLE.ADMIN, label: ROLE.ADMIN },
+  { value: ROLE.USER, label: ROLE.USER },
+]);
+
+const formState = reactive<USER_SIGN_UP>({
   email: "",
   password: "",
-  confirmPassword: "",
-  username: "",
-  layout: "vertical",
+  password_confirmation: "",
+  firstname: "",
+  lastname: "",
+  role: "USER",
 });
 
 const onFinish = (values: any) => {
-  try {
-    const user: {
-      email: string;
-      password: string;
-      username: string;
-    } = {
-      email: values.email,
-      password: values.password,
-      username: values.username,
-    };
-    loading.value = true;
-    setTimeout(async () => {
-      const result = await authService.registerService(user);
-      if (result.status === 200 && result.data.success) {
-        const data = result.data.data;
-        const token = data.token;
-        const user = {
-          id: data.id,
-          roleId: data.roleId,
-          email: data.email,
-          avatar: data.avatar,
-          username: data.username,
-        };
-        // store token to cookies
-        Cookies.set(TOKEN, token);
-        // dispatch user to reducer
-        store.dispatch("user/setUserLoginAction", user);
-        // push to homepage
-        router.push("/");
-        // toast
-        setTimeout(() => {
-          // toast
-          toast.success(result.data.message);
-        }, 100);
-      } else {
-        toast.error(result.data.message);
+  const user: USER_SIGN_UP = {
+    email: values.email,
+    password: values.password,
+    lastname: values.lastname,
+    firstname: values.firstname,
+    password_confirmation: values.password_confirmation,
+    role: values.role,
+  };
+  loading.value = true;
+  setTimeout(async () => {
+    try {
+      const result = await authServiceSuco.registerService(user);
+      const data: string = result.data.status;
+      const statusCode: number = result.status;
+      if (statusCode === STATUS_CODE.SUCCESS) {
+        toast.success("Success! Please verify your email before login!");
       }
-      loading.value = false;
-    }, 1000);
-  } catch (error) {
-    console.log("Login error");
-  }
+    } catch (error) {
+      const message: string = error.data.error.message;
+      toast.error(message);
+    }
+    loading.value = false;
+  }, 500);
 };
 
 const onFinishFailed = (errorInfo: any) => {
@@ -177,33 +212,33 @@ const disabled = computed(() => {
   return !(
     formState.email &&
     formState.password &&
-    formState.confirmPassword === formState.password
+    formState.password_confirmation === formState.password &&
+    formState.lastname &&
+    formState.firstname &&
+    formState.role
   );
 });
 
 const handleConfirmPassword = computed(() => {
-  return formState.password !== formState.confirmPassword &&
-    formState.confirmPassword
+  return formState.password !== formState.password_confirmation &&
+    formState.password_confirmation
     ? "Password does not match!"
     : "";
 });
+
+const filterOption = (input: string, option: any) => {
+  return option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+};
 </script>
 <style scoped>
-#components-form-demo-normal-login .login-form {
-  max-width: 300px;
-}
-#components-form-demo-normal-login .login-form-forgot {
-  float: right;
-}
-#components-form-demo-normal-login .login-form-button {
-  width: 100%;
-}
 .form {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  min-height: 100%;
+  padding: 50px 0;
 }
+
 .form-container {
   max-width: 400px;
   width: 95%;
@@ -212,6 +247,7 @@ const handleConfirmPassword = computed(() => {
 
 .register-form {
   margin: 0 auto;
+  overflow-y: auto;
 }
 
 .register-form .register-form-button {

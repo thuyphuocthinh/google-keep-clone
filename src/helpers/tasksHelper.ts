@@ -165,3 +165,29 @@ export const recoverOneTask = async (
     console.log(error);
   }
 };
+
+export const searchTasks = async (userId: string, keyword: string, store: any) => {
+  try {
+    const result = await taskServiceApi.searchTasks(keyword, userId);
+    if (result.status === STATUS_CODE.SUCCESS && result.data.success) {
+      store.dispatch("tasksModule/setTasksSearchAction", result.data.data);
+    } else {
+      toast.error(result.data.message);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const changeStatus = async (userId: string, taskUpdate: {taskId: string, newStatusCode: string}, store: any) => {
+  try {
+    const result = await taskServiceApi.changeStatus(taskUpdate);
+    if (result.status === STATUS_CODE.SUCCESS && result.data.success) {
+      await getTasksApi(userId, store);
+    } else {
+      toast.error(result.data.message);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}

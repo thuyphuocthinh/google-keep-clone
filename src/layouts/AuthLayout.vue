@@ -13,6 +13,7 @@
 .auth-layout {
   background: #fff;
   height: 100vh;
+  overflow-y: hidden;
 }
 
 .auth-container {
@@ -33,6 +34,7 @@
 .auth-form {
   width: 40%;
   height: 100%;
+  overflow-y: auto;
 }
 
 @media screen and (max-width: 780px) {

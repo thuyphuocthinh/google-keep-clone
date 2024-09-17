@@ -138,14 +138,6 @@ let task: Task = reactive({
   createdBy: userLogin.id,
 });
 
-onUpdated(() => {
-  task = { ...task, ["content"]: input.value };
-});
-
-onMounted(() => {
-  tasksHelper.getStatusListApi(store);
-});
-
 const createNewTask = async () => {
   const result = validation(task, ["title", "content"]);
   if (result.isValid) {
@@ -174,6 +166,16 @@ const closeTaskBarMain = () => {
 };
 
 onClickOutside(taskTarget, () => closeTaskBarMain());
+
+// life cycle hooks
+onUpdated(() => {
+  task = { ...task, ["content"]: input.value };
+});
+
+onMounted(() => {
+  // tasksHelper.getStatusListApi(store);
+});
+
 </script>
 
 <style>

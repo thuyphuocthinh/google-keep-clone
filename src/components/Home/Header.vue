@@ -62,7 +62,7 @@
                 <template #overlay>
                   <a-menu>
                     <a-menu-item>
-                      <span> Hi, {{ userLogin.username }} </span>
+                      <span> Hi, {{ userLogin.email }} </span>
                     </a-menu-item>
                     <a-menu-item>
                       <a href="javascript:;">Profile</a>
@@ -98,7 +98,16 @@ import { useRouter, useRoute } from "vue-router";
 import { searchService } from "../../services/searchServices";
 import { UserOutlined } from "@ant-design/icons-vue";
 import Cookies from "js-cookie";
-import { TOKEN } from "../../constants/index";
+import {
+  TOKEN,
+  STATUS_CODE,
+  ACCESS_TOKEN,
+  REFRESH_TOKEN,
+} from "../../constants/index";
+import * as tasksHelper from "../../helpers/tasksHelper";
+import { authServiceSuco } from "../../services/authServiceSuco";
+import * as userHelper from "../../helpers/userHelper";
+import { toast } from "vue3-toastify";
 
 const store = useStore();
 const router = useRouter();
@@ -115,16 +124,28 @@ const handleShowHideSidebar = () => {
   else showFullSider();
 };
 
-const handleLogout = () => {
-  Cookies.remove(TOKEN);
-  router.push("/auth/login");
-  store.dispatch("user/setUserLogoutAction");
+const handleLogout = async () => {
+  try {
+    const result = await authServiceSuco.logoutService();
+    const statusCode: number = result.status;
+    if (statusCode === STATUS_CODE.SUCCESS) {
+      Cookies.remove(ACCESS_TOKEN);
+      Cookies.remove(REFRESH_TOKEN);
+      setTimeout(() => {
+        toast.success("Logout successfully");
+      }, 200);
+      router.push("/auth/login");
+      store.dispatch("user/setUserLogoutAction");
+    }
+  } catch (error) {
+    console.log("Error logout: ", error);
+  }
 };
 
 const handleScroll = (e: Event) => {
   const scrollY = window.scrollY;
   const headerContainer = document.querySelector(".header-container");
-  if (scrollY > 50) {
+  if (scrollY > 80) {
     headerContainer.classList.add("header-container-fixed");
   } else {
     headerContainer.classList.remove("header-container-fixed");
@@ -135,17 +156,15 @@ const handleTypingSearch = (e: Event) => {
   const { name, value } = e.target;
   clearTimeout(idTimeOut.value);
   idTimeOut.value = setTimeout(() => {
-    const result = searchService(value);
+    tasksHelper.searchTasks(userLogin.id, value, store);
     router.push({ path: `/search`, query: { keyword: value } });
-    store.dispatch("tasksModule/setTasksSearchAction", result);
   }, 500);
 };
 
 const handleSubmitSearch = (e: Event) => {
   const value: string = e.target.elements[0].value;
-  const result = searchService(value);
+  tasksHelper.searchTasks(userLogin.id, value, store);
   router.push({ path: `/search`, query: { keyword: value } });
-  store.dispatch("tasksModule/setTasksSearchAction", result);
 };
 
 watch(
@@ -158,6 +177,7 @@ watch(
 );
 
 onMounted(() => {
+  userHelper.getUserHelper(store);
   window.addEventListener("scroll", handleScroll);
 });
 

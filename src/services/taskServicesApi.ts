@@ -22,33 +22,40 @@ class TaskServiceApi extends BaseService {
     return this.patch(`${DOMAIN}/tasks/updateTask`, taskUpdate);
   }
   deleteTask(taskId: string) {
-    return this.deleteTemporarily(`${DOMAIN}/tasks/deleteTask/${taskId}`);
+    return this.patch(`${DOMAIN}/tasks/deleteTask/${taskId}`, {});
   }
   deleteManyTasks(listTaskId: string[]) {
-    return this.deleteManyTasksTemporarily(
+    return this.patch(
       `${DOMAIN}/tasks/deleteManyTask`,
-      listTaskId
+      {listTaskId: listTaskId}
     );
   }
   deleteTaskPermanently(taskId: string) {
-    return this.deletePermanently(
+    return this.delete(
       `${DOMAIN}/tasks/deleteTaskPermanently/${taskId}`
     );
   }
   deleteManyTaskPermanently(listTaskId: string[]) {
-    return this.deleteManyTasksPermanentlyBase(
+    return this.patch(
       `${DOMAIN}/tasks/deleteManyTaskPermanently/`,
-      listTaskId
+      {listTaskId: listTaskId}
     );
   }
   recoverOneTask(taskId: string) {
     return this.patch(`${DOMAIN}/tasks/recoverTask/${taskId}`, {});
   }
   recoverManyTasks(listTaskId: string[]) {
-    return this.recoverManyTasksBase(
+    return this.patch(
       `${DOMAIN}/tasks/recoverManyTask`,
       listTaskId
     );
+  }
+  searchTasks(keyword: string, userId: string) {
+    return this.get(`${DOMAIN}/tasks/search/${userId}?keyword=${keyword}`)
+  }
+
+  changeStatus(taskUpdate: {taskId: string, newStatusCode: string}) {
+    return this.patch(`${DOMAIN}/tasks/changeStatus`, {taskUpdate: taskUpdate})
   }
 }
 
