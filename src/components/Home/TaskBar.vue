@@ -79,9 +79,7 @@
         <div class="task-tools">
           <TaskWidgets />
           <div class="task-tools-right ms-auto">
-            <button type="button" class="btn-create" @click="createNewTask">
-              Tạo
-            </button>
+            <button type="button" class="btn-create" @click="createNewTask">Tạo</button>
             <button type="button" @click="closeTaskBarMain">Đóng</button>
           </div>
         </div>
@@ -95,14 +93,12 @@ import TaskWidgets from "./TaskWidgets.vue";
 import { onMounted, onUnmounted, reactive, ref, onUpdated, computed } from "vue";
 import type { Ref } from "vue";
 import { useTextareaAutosize, onClickOutside } from "@vueuse/core";
-import { dateString } from "../../helpers/dateString";
 import { Task } from "../../models/task";
 import { validation } from "../../helpers/validation";
 import { toast } from "vue3-toastify";
 import { STATUS, STATUS_CODE } from "../../constants/index";
-import * as taskServices from "../../services/taskServices";
 import { useStore } from "vuex";
-import { taskServiceApi } from "../../services/taskServicesApi";
+import { taskServiceApi } from "../../services/myBackEnd/taskServicesApi";
 import * as tasksHelper from "../../helpers/tasksHelper";
 const store = useStore();
 const { input, textarea } = useTextareaAutosize();
@@ -175,7 +171,6 @@ onUpdated(() => {
 onMounted(() => {
   // tasksHelper.getStatusListApi(store);
 });
-
 </script>
 
 <style>
@@ -184,8 +179,7 @@ onMounted(() => {
 }
 
 .taskbar-container {
-  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3),
-    0 2px 6px 2px rgba(60, 64, 67, 0.15);
+  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
   border: 1px solid #e0e0e0;
   border-radius: 10px;
   max-width: 600px;

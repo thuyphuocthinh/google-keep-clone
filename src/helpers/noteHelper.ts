@@ -1,5 +1,5 @@
 import { STATUS_CODE } from "../constants";
-import { noteServiceSuco } from "../services/noteServiceSuco";
+import { noteServiceSuco } from "../services/sNote/noteServiceSuco";
 
 export const getNotesHelper = async (store: any) => {
     try {

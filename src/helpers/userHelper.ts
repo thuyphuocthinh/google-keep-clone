@@ -1,5 +1,5 @@
 import { STATUS_CODE } from "../constants";
-import { userServiceSuco } from "../services/userServiceSuco";
+import { userServiceSuco } from "../services/sNote/userServiceSuco";
 
 export const getUserHelper = async (store: any) => {
     try {

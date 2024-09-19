@@ -103,14 +103,7 @@
                 v-model="taskListByStatus.list"
                 group="tasks"
                 :title="taskListByStatus.statusCode"
-                @update="onUpdate"
                 @add="onAdd"
-                @remove="onRemove"
-                @start="onStart"
-                @end="onEnd"
-                @clone="onClone"
-                @change="onChange"
-                @move="onMove"
               >
                 <div v-for="task in taskListByStatus.list" :key="task.id">
                   <TaskItem :task="task" :status="task.status" />
@@ -125,76 +118,41 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onBeforeMount, onMounted } from "vue";
+import { computed, onBeforeMount } from "vue";
 import { useStore } from "vuex";
 import TaskItem from "./TaskItem.vue";
 import { VueDraggable, DraggableEvent } from "vue-draggable-plus";
 import type { Ref } from "vue";
 import { ref } from "vue";
 import Loading from "../Loading/Loading.vue";
-import { taskServiceApi } from "../../services/taskServicesApi";
-import { STATUS_CODE } from "../../constants/index";
-import * as noteHelper from "../../helpers/noteHelper";
+import * as tasksHelper from "../../helpers/tasksHelper";
 // Access the store instance
 const store = useStore();
 const isLoading: Ref<Boolean> = ref(true);
 const userLogin = store.state.user.userLogin;
 const tasks = computed(() => store.getters["tasksModule/getAllTasks"]);
 
-onMounted(() => {
-  noteHelper.getNotesHelper(store);
+onBeforeMount(async () => {
+  await tasksHelper.getTasksApi(userLogin.id, store);
   setTimeout(() => {
     isLoading.value = false;
   }, 1500);
 });
 
 // VueDraggable event handlers
-function onStart(event: DraggableEvent) {
-  console.log("start drag event");
-}
-
-function onEnd(event: DraggableEvent) {
-  console.log("end drag event");
-}
-
-function onUpdate(event: DraggableEvent) {
-  console.log("update event");
-}
-
 function onAdd(event: DraggableEvent) {
-  // console.log("---------------------");
-  // console.log("add event from ", event.from.title);
-  // console.log("add event from ", event.clonedData);
-  // console.log("add event to ", event.to.title);
   const id: number = event.clonedData.id;
-  const oldStatus: string = event.from.title;
+  // const oldStatus: string = event.from.title;
   const newStatus: string = event.to.title;
-  console.log("oldStatus: ", oldStatus);
-  console.log("newStatus: ", newStatus);
   const taskUpdate = {
     taskId: id,
     newStatusCode: newStatus,
   };
   tasksHelper.changeStatus(userLogin.id, taskUpdate, store);
-  // console.log("Change status successfully");
-  // console.log("---------------------");
 }
-
-function onRemove(event: DraggableEvent) {
-  console.log("remove event");
-}
-
-function onClone(event: DraggableEvent) {}
-
-function onChange(event: DraggableEvent) {}
-
-function onMove(event: MoveEvent, originalEvent: Event) {}
-
-// life cycle
 </script>
 
 <style>
-
 .workspace-container {
   max-width: 1000px;
   width: 100%;

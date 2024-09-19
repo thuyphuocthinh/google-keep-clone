@@ -7,7 +7,8 @@ import Homepage from "../pages/Home/Homepage.vue";
 import Trashpage from "../pages/Trash/Trashpage.vue";
 import Search from "../pages/Search/Search.vue";
 import { PAGE} from "../constants";
-import { getAccessToken, removeAccessToken, removeRefreshToken } from '../helpers/getToken';
+import { getAccessToken, removeToken } from '../helpers/getToken';
+import Labelpage from "../pages/Label/Labelpage.vue";
 
 const routes = [
   {
@@ -29,6 +30,11 @@ const routes = [
         name: PAGE.SEARCH,
         component: Search,
       },
+      {
+        path: "labels/:labelId",
+        name: PAGE.LABEL,
+        component: Labelpage
+      }
     ],
   },
   {
@@ -48,11 +54,10 @@ const routes = [
       },
     ],
   },
-  {
-    path: "/:pathMatch(.*)*",
-    name: PAGE.NOTFOUND,
-    component: Homepage,
-  },
+  // {
+  //   path: "/:pathMatch(.*)*",
+  //   name: PAGE.NOTFOUND,
+  // },
 ];
 
 export const router = createRouter({
@@ -65,9 +70,10 @@ router.beforeEach(async (to: any, from: any, next: any) => {
   if(to.name === PAGE.LOGIN && accessToken || to.name === PAGE.REGISTER && accessToken) {
     return next({name: PAGE.HOMEPAGE});
   }
-  if (to.name !== PAGE.LOGIN && !accessToken) {
+  if (to.name !== PAGE.LOGIN && !accessToken && to.name !== PAGE.REGISTER) {
     next({ name: PAGE.LOGIN });
-    removeAccessToken();
-    removeRefreshToken();
+    // removeAccessToken();
+    // removeRefreshToken();
+    removeToken();
   } else next();
 });

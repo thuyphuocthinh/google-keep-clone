@@ -1,7 +1,7 @@
 import axiosInstance from './axiosInstance';
 import { getAccessToken, getRefreshToken, removeAccessToken, removeRefreshToken, setAccessToken, setRefreshToken} from '../helpers/getToken';
 import { REFRESH_TOKEN, STATUS_CODE } from '../constants';
-import { authServiceSuco } from '../services/authServiceSuco';
+import { authServiceSuco } from '../services/sNote/authServiceSuco';
 import { toast } from 'vue3-toastify';
 
 axiosInstance.interceptors.request.use(

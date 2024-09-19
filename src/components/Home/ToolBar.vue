@@ -10,9 +10,7 @@
           <span @click="handleCloseToolBar">
             <i class="fa-solid fa-x"></i>
           </span>
-          <span class="toolbar-title"
-            >{{ tasksSelected.length }} selected tasks</span
-          >
+          <span class="toolbar-title">{{ tasksSelected.length }} selected tasks</span>
         </div>
         <div class="toolbar-right">
           <a-popconfirm
@@ -26,11 +24,7 @@
               <i class="fa-solid fa-trash"></i>
             </span>
           </a-popconfirm>
-          <span
-            v-if="showDeletedPermanent"
-            title="Khôi phục"
-            @click="handleRecoverTasks"
-          >
+          <span v-if="showDeletedPermanent" title="Khôi phục" @click="handleRecoverTasks">
             <i class="fa-solid fa-trash-can-arrow-up"></i>
           </span>
           <a-popconfirm
@@ -65,9 +59,7 @@ import { Task } from "../../models/task";
 import * as tasksHelper from "../../helpers/tasksHelper";
 
 const store = useStore();
-const tasksSelected = computed(
-  () => store.getters["tasksModule/getTasksSelected"]
-);
+const tasksSelected = computed(() => store.getters["tasksModule/getTasksSelected"]);
 const showDeletedPermanent = computed(
   () => store.getters["tasksModule/showDeletedPermanentIcon"]
 );
@@ -78,10 +70,7 @@ const userLogin = store.state.user.userLogin;
 
 const handleClickOutside = (e: Event) => {
   let id = parseInt(e.target.getAttribute("id"));
-  if (
-    e.target === document.querySelector(".toolbar") ||
-    e.target.closest(".toolbar")
-  )
+  if (e.target === document.querySelector(".toolbar") || e.target.closest(".toolbar"))
     return;
   if (isNaN(id)) {
     handleCloseToolBar();
@@ -104,11 +93,7 @@ const handleDeleteTasks = () => {
 
 const handleDeleteTasksPermanently = () => {
   if (tasksSelected.value.length > 0) {
-    tasksHelper.deleteManyTaskPermanently(
-      userLogin.id,
-      tasksSelected.value,
-      store
-    );
+    tasksHelper.deleteManyTaskPermanently(userLogin.id, tasksSelected.value, store);
   }
 };
 

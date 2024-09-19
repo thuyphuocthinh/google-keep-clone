@@ -1,5 +1,6 @@
 <template>
   <a-layout-sider class="home-sider" :class="isSiderFull ? 'full' : 'icon'">
+    <!-- full sider -->
     <div v-if="isSiderFull" class="full-sider">
       <ul class="sider-list">
         <li class="sider-item">
@@ -18,12 +19,26 @@
             <span class="sider-title"> Lời nhắc </span>
           </a>
         </li>
-        <li class="sider-item">
-          <a href="#" class="sider-link">
+        <li v-for="(label, index) in labels" :key="index" class="sider-item">
+          <router-link
+            :to="`/labels/${label._id}`"
+            exact-active-class="active"
+            class="sider-link"
+          >
             <span class="sider-icon">
-              <i class="fa-solid fa-pen"></i>
+              <i class="fa-solid fa-tag"></i>
             </span>
-            <span class="sider-title"> Chỉnh sửa nhãn </span>
+            <span class="sider-title" style="font-weight: 300">
+              {{ label.title }}
+            </span>
+          </router-link>
+        </li>
+        <li class="sider-item">
+          <a href="#" class="sider-link" @click="openLabelModal">
+            <span class="sider-icon">
+              <i class="fa-solid fa-pen-to-square"></i>
+            </span>
+            <span class="sider-title"> Quản lí nhãn </span>
           </a>
         </li>
         <li class="sider-item">
@@ -35,11 +50,7 @@
           </a>
         </li>
         <li class="sider-item">
-          <router-link
-            to="/trash"
-            exact-active-class="active"
-            class="sider-link"
-          >
+          <router-link to="/trash" exact-active-class="active" class="sider-link">
             <span class="sider-icon">
               <i class="fa-solid fa-trash"></i>
             </span>
@@ -48,7 +59,7 @@
         </li>
       </ul>
     </div>
-
+    <!-- icon sider -->
     <div v-else="isSiderFull" class="icon-sider">
       <ul class="sider-list">
         <li class="sider-item">
@@ -65,10 +76,11 @@
             </span>
           </a>
         </li>
+
         <li class="sider-item">
-          <a href="#" class="sider-link">
+          <a href="#" class="sider-link" @click="openLabelModal">
             <span class="sider-icon">
-              <i class="fa-solid fa-pen"></i>
+              <i class="fa-solid fa-pen-to-square"></i>
             </span>
           </a>
         </li>
@@ -80,11 +92,7 @@
           </a>
         </li>
         <li class="sider-item">
-          <router-link
-            to="/trash"
-            exact-active-class="active"
-            class="sider-link"
-          >
+          <router-link to="/trash" exact-active-class="active" class="sider-link">
             <span class="sider-icon">
               <i class="fa-solid fa-trash"></i>
             </span>
@@ -96,28 +104,24 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  onMounted,
-  onUnmounted,
-  onUpdated,
-  ref,
-  provide,
-  inject,
-  computed,
-} from "vue";
-import type { Ref, InjectionKey } from "vue";
-import { mapState, useStore } from "vuex";
-const store = useStore();
+import { onMounted, onUnmounted, onUpdated, computed } from "vue";
+import { useStore } from "vuex";
+import Label from "../Label/Label.vue";
+import * as labelsHelper from "../../helpers/labelHelper";
 
+const store = useStore();
 const isSiderFull = computed(() => store.state.sidebar.isSiderFull);
 const canHover = computed(() => store.state.sidebar.canHover);
+const labels = computed(() => store.getters["labels/getLabels"]);
+const userLogin = store.state.user.userLogin;
 
-const hoverSidebar = (value) =>
+// methods
+const hoverSidebar = (value: any) =>
   store.dispatch("sidebar/hoverSidebar", {
     payload: value,
   });
 
-const handleMouseMove = (e) => {
+const handleMouseMove = (e: MouseEvent) => {
   const { screenX, screenY } = e;
   if (canHover.value) {
     if (screenX > 0 && screenX < 75 && screenY > 200) {
@@ -129,10 +133,17 @@ const handleMouseMove = (e) => {
   }
 };
 
+const openLabelModal = () => {
+  store.dispatch("modal/openModalAction", Label);
+};
+
+// lifecycle hooks
+
 onMounted(() => {
   if (canHover.value) {
     window.addEventListener("mousemove", handleMouseMove);
   }
+  labelsHelper.getLabels(store, userLogin.id);
 });
 
 onUpdated(() => {

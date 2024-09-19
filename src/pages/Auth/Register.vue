@@ -148,17 +148,16 @@
 <script lang="ts" setup>
 import { reactive, computed, ref } from "vue";
 import { UserOutlined, LockOutlined } from "@ant-design/icons-vue";
-import { TOKEN } from "../../constants/index";
 import { toast } from "vue3-toastify";
 import { useRouter } from "vue-router";
 import type { Ref } from "vue";
-import { authServiceSuco } from "../../services/authServiceSuco";
+import { authServiceSuco } from "../../services/sNote/authServiceSuco";
 import Cookies from "js-cookie";
 import { useStore } from "vuex";
 import type { SelectProps } from "ant-design-vue";
 import { ROLE } from "../../constants/index";
 import { USER_SIGN_UP } from "../../models/user";
-import { STATUS_CODE, STATUS_TEXT } from "../../constants/index";
+import { STATUS_CODE } from "../../constants/index";
 
 const store = useStore();
 const loading: Ref<Boolean> = ref(false);
@@ -190,7 +189,7 @@ const onFinish = (values: any) => {
   loading.value = true;
   setTimeout(async () => {
     try {
-      const result = await authServiceSuco.registerService(user);
+      const result: any = await authServiceSuco.registerService(user);
       const data: string = result.data.status;
       const statusCode: number = result.status;
       if (statusCode === STATUS_CODE.SUCCESS) {

@@ -1,7 +1,7 @@
 import { toast } from "vue3-toastify";
 import { STATUS_CODE } from "../constants";
 import { Task } from "../models/task";
-import { taskServiceApi } from "../services/taskServicesApi";
+import { taskServiceApi } from "../services/myBackEnd/taskServicesApi";
 
 export const getTasksApi = async (userId: string, store: any) => {
   try {
@@ -184,10 +184,32 @@ export const changeStatus = async (userId: string, taskUpdate: {taskId: string, 
     const result = await taskServiceApi.changeStatus(taskUpdate);
     if (result.status === STATUS_CODE.SUCCESS && result.data.success) {
       await getTasksApi(userId, store);
-    } else {
-      toast.error(result.data.message);
-    }
-  } catch (error) {
-    console.log(error);
+    } 
+  } catch (error: any) {
+    toast.error(error.data.message);
+  }
+}
+
+export const attachLabel = async(userId: string, taskId: string, labelId: string, store: any) => {
+  try {
+    const result = await taskServiceApi.attachLabel(labelId, taskId);
+    if (result.status === STATUS_CODE.SUCCESS && result.data.success) {
+      toast.success(result.data.message);
+      await getTasksApi(userId, store);
+    } 
+  } catch (error: any) {
+    toast.error(error.data.message);
+  }
+}
+
+export const detachLabel = async(userId: string, taskId: string, labelId: string, store: any) => {
+  try {
+    const result = await taskServiceApi.detachLabel(labelId, taskId);
+    if (result.status === STATUS_CODE.SUCCESS && result.data.success) {
+      toast.success(result.data.message);
+      await getTasksApi(userId, store);
+    } 
+  } catch (error: any) {
+    toast.error(error.data.message);
   }
 }

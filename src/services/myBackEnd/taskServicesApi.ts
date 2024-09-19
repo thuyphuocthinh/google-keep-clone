@@ -1,6 +1,6 @@
-import { DOMAIN } from "../constants";
-import { Task } from "../models/task";
-import { BaseService } from "./baseService";
+import { DOMAIN } from "../../constants";
+import { Task } from "../../models/task";
+import { BaseService } from "../baseService";
 
 class TaskServiceApi extends BaseService {
   getTasksList(userId: string) {
@@ -56,6 +56,12 @@ class TaskServiceApi extends BaseService {
 
   changeStatus(taskUpdate: {taskId: string, newStatusCode: string}) {
     return this.patch(`${DOMAIN}/tasks/changeStatus`, {taskUpdate: taskUpdate})
+  }
+  attachLabel(labelId: string, taskId: string) {
+    return this.patch(`${DOMAIN}/tasks/attachLabel/${taskId}/${labelId}`, {})
+  }
+  detachLabel(labelId: string, taskId: string) {
+    return this.patch(`${DOMAIN}/tasks/detachLabel/${taskId}/${labelId}`, {})
   }
 }
 

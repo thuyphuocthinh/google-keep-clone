@@ -54,11 +54,7 @@
         style="width: 200px"
         :disabled="taskDetail.deleted"
       >
-        <option
-          v-for="(status, index) in statusList"
-          :key="index"
-          :value="status.code"
-        >
+        <option v-for="(status, index) in statusList" :key="index" :value="status.code">
           {{ status.title }}
         </option>
       </select>
@@ -94,10 +90,10 @@ import { computed, onMounted, onUpdated, reactive, ref } from "vue";
 import { useTextareaAutosize } from "@vueuse/core";
 import { validation } from "../../helpers/validation";
 import { toast } from "vue3-toastify";
-import { updateTaskService } from "../../services/taskServices";
+// import { updateTaskService } from "../../services/taskServices";
 import * as tasksHelper from "../../helpers/tasksHelper";
 import { LoadingOutlined } from "@ant-design/icons-vue";
-import { taskServiceApi } from "../../services/taskServicesApi";
+import { taskServiceApi } from "../../services/myBackEnd/taskServicesApi";
 import { STATUS_CODE } from "../../constants/index";
 const { input, textarea } = useTextareaAutosize();
 const today: Ref<string> = ref(new Date().toISOString().slice(0, 16));

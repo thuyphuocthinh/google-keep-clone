@@ -62,13 +62,13 @@
                 <template #overlay>
                   <a-menu>
                     <a-menu-item>
-                      <span> Hi, {{ userLogin.email }} </span>
+                      <span> Hi, {{ userLogin.username }} </span>
                     </a-menu-item>
                     <a-menu-item>
                       <a href="javascript:;">Profile</a>
                     </a-menu-item>
                     <a-menu-item>
-                      <span @click="handleLogout">Logout</span>
+                      <span @click="myHandleLogOut">Logout</span>
                     </a-menu-item>
                   </a-menu>
                 </template>
@@ -82,32 +82,17 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  computed,
-  onBeforeMount,
-  onMounted,
-  onUnmounted,
-  onUpdated,
-  ref,
-  renderSlot,
-  watch,
-} from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import type { Ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
-import { searchService } from "../../services/searchServices";
 import { UserOutlined } from "@ant-design/icons-vue";
 import Cookies from "js-cookie";
-import {
-  TOKEN,
-  STATUS_CODE,
-  ACCESS_TOKEN,
-  REFRESH_TOKEN,
-} from "../../constants/index";
+import { STATUS_CODE, ACCESS_TOKEN, REFRESH_TOKEN } from "../../constants/index";
 import * as tasksHelper from "../../helpers/tasksHelper";
-import { authServiceSuco } from "../../services/authServiceSuco";
-import * as userHelper from "../../helpers/userHelper";
+import { authServiceSuco } from "../../services/sNote/authServiceSuco";
 import { toast } from "vue3-toastify";
+import { removeToken } from "../../helpers/getToken";
 
 const store = useStore();
 const router = useRouter();
@@ -142,10 +127,19 @@ const handleLogout = async () => {
   }
 };
 
+const myHandleLogOut = () => {
+  removeToken();
+  router.push("/auth/login");
+  store.dispatch("user/setUserLogoutAction");
+  setTimeout(() => {
+    toast.success("Logout success");
+  }, 200);
+};
+
 const handleScroll = (e: Event) => {
   const scrollY = window.scrollY;
-  const headerContainer = document.querySelector(".header-container");
-  if (scrollY > 80) {
+  const headerContainer: HTMLElement | null = document.querySelector(".header-container");
+  if (scrollY > 20) {
     headerContainer.classList.add("header-container-fixed");
   } else {
     headerContainer.classList.remove("header-container-fixed");
@@ -177,7 +171,6 @@ watch(
 );
 
 onMounted(() => {
-  userHelper.getUserHelper(store);
   window.addEventListener("scroll", handleScroll);
 });
 
@@ -196,7 +189,7 @@ onUnmounted(() => {
 
 @keyframes slideDown {
   0% {
-    transform: translateY(-50%);
+    transform: translateY(-100%);
   }
   100% {
     transform: translateY(0);

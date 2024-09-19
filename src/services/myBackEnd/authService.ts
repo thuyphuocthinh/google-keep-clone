@@ -1,12 +1,14 @@
 import axios from "axios";
-import { DOMAIN } from "../constants";
+import { DOMAIN } from "../../constants/index";
 
 export class AuthService {
   loginService(user: {}) {
-    return axios.post(`${DOMAIN}/auth/login`, user, {
-      headers: {
-        "Content-Type": "application/json",
-      },
+    return new Promise((resolve, reject) => {
+      axios.post(`${DOMAIN}/auth/login`, user, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).then(response => resolve(response)).catch(error => reject(error.response));
     });
   }
   registerService(user: {}) {

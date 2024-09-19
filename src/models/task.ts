@@ -1,5 +1,5 @@
 export interface Task {
-  id: number;
+  id: string;
   title: string;
   content: string;
   image?: string;
@@ -7,6 +7,7 @@ export interface Task {
   timeStart: string;
   timeEnd: string;
   label?: [];
+  labelTitle?: [];
   status: string;
   createdBy: string; // creator's id
   createdAt: string;

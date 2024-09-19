@@ -5,6 +5,7 @@ import modal from "./modules/modal";
 import user from "./modules/user";
 import createPersistedState from "vuex-persistedstate";
 import loading from "./modules/loading";
+import labels from "./modules/labels";
 
 const userState = createPersistedState({
   paths: ["user"],
@@ -18,6 +19,7 @@ export default createStore({
     modal,
     user,
     loading,
+    labels
   },
   plugins: [userState],
 });

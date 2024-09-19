@@ -1,7 +1,7 @@
 import axios from "axios";
-import { DOMAIN } from "../constants";
-import { USER_SIGN_UP, USER_SIGN_IN } from "../models/user";
-import axiosInstance from "../api/axiosInterceptor";
+import { DOMAIN } from "../../constants/index";
+import { USER_SIGN_UP, USER_SIGN_IN } from "../../models/user";
+import axiosInstance from "../../api/axiosInterceptor";
 
 export class AuthServiceSuco {
 
