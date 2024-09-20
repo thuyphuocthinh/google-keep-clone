@@ -90,7 +90,7 @@
 
 <script setup lang="ts">
 import TaskWidgets from "./TaskWidgets.vue";
-import { onMounted, onUnmounted, reactive, ref, onUpdated, computed } from "vue";
+import { onMounted, reactive, ref, onUpdated, computed } from "vue";
 import type { Ref } from "vue";
 import { useTextareaAutosize, onClickOutside } from "@vueuse/core";
 import { Task } from "../../models/task";
@@ -169,7 +169,7 @@ onUpdated(() => {
 });
 
 onMounted(() => {
-  // tasksHelper.getStatusListApi(store);
+  tasksHelper.getStatusListApi(store);
 });
 </script>
 

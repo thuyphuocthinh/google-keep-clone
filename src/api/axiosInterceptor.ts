@@ -61,7 +61,7 @@ axiosInstance.interceptors.response.use(
         toast.error("Invalid token");
         window.location.href = "/auth/login";
       }
-      return Promise.reject(error.response);
+      return Promise.reject(error?.response);
     },
 );
 

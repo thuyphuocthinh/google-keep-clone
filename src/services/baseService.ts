@@ -1,4 +1,4 @@
-import axiosInstance from "../api/axiosInterceptor";
+import axiosInstance from "../api/myAxiosInterceptor";
 
 export class BaseService {
   constructor() {}

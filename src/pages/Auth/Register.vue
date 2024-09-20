@@ -149,19 +149,14 @@
 import { reactive, computed, ref } from "vue";
 import { UserOutlined, LockOutlined } from "@ant-design/icons-vue";
 import { toast } from "vue3-toastify";
-import { useRouter } from "vue-router";
 import type { Ref } from "vue";
 import { authServiceSuco } from "../../services/sNote/authServiceSuco";
-import Cookies from "js-cookie";
-import { useStore } from "vuex";
 import type { SelectProps } from "ant-design-vue";
 import { ROLE } from "../../constants/index";
 import { USER_SIGN_UP } from "../../models/user";
 import { STATUS_CODE } from "../../constants/index";
 
-const store = useStore();
 const loading: Ref<Boolean> = ref(false);
-const router = useRouter();
 
 const options = ref<SelectProps["options"]>([
   { value: ROLE.ADMIN, label: ROLE.ADMIN },
@@ -190,12 +185,11 @@ const onFinish = (values: any) => {
   setTimeout(async () => {
     try {
       const result: any = await authServiceSuco.registerService(user);
-      const data: string = result.data.status;
       const statusCode: number = result.status;
       if (statusCode === STATUS_CODE.SUCCESS) {
         toast.success("Success! Please verify your email before login!");
       }
-    } catch (error) {
+    } catch (error: any) {
       const message: string = error.data.error.message;
       toast.error(message);
     }

@@ -87,10 +87,7 @@ import type { Ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
 import { UserOutlined } from "@ant-design/icons-vue";
-import Cookies from "js-cookie";
-import { STATUS_CODE, ACCESS_TOKEN, REFRESH_TOKEN } from "../../constants/index";
 import * as tasksHelper from "../../helpers/tasksHelper";
-import { authServiceSuco } from "../../services/sNote/authServiceSuco";
 import { toast } from "vue3-toastify";
 import { removeToken } from "../../helpers/getToken";
 
@@ -98,7 +95,7 @@ const store = useStore();
 const router = useRouter();
 const route = useRoute();
 const isSiderFull = computed(() => store.state.sidebar.isSiderFull);
-const searchRef = ref(null);
+const searchRef: Ref<HTMLInputElement | null> = ref(null);
 const idTimeOut: Ref<number> = ref(0);
 const userLogin = store.state.user.userLogin;
 
@@ -109,6 +106,7 @@ const handleShowHideSidebar = () => {
   else showFullSider();
 };
 
+/*
 const handleLogout = async () => {
   try {
     const result = await authServiceSuco.logoutService();
@@ -126,6 +124,7 @@ const handleLogout = async () => {
     console.log("Error logout: ", error);
   }
 };
+*/
 
 const myHandleLogOut = () => {
   removeToken();
@@ -139,26 +138,35 @@ const myHandleLogOut = () => {
 const handleScroll = (e: Event) => {
   const scrollY = window.scrollY;
   const headerContainer: HTMLElement | null = document.querySelector(".header-container");
-  if (scrollY > 20) {
-    headerContainer.classList.add("header-container-fixed");
-  } else {
-    headerContainer.classList.remove("header-container-fixed");
+  if (headerContainer) {
+    if (scrollY > 20) {
+      headerContainer.classList.add("header-container-fixed");
+    } else {
+      headerContainer.classList.remove("header-container-fixed");
+    }
   }
 };
 
 const handleTypingSearch = (e: Event) => {
-  const { name, value } = e.target;
-  clearTimeout(idTimeOut.value);
-  idTimeOut.value = setTimeout(() => {
-    tasksHelper.searchTasks(userLogin.id, value, store);
-    router.push({ path: `/search`, query: { keyword: value } });
-  }, 500);
+  const target = e.target as HTMLInputElement | null;
+  if (target) {
+    const { value } = target;
+    clearTimeout(idTimeOut.value);
+    idTimeOut.value = setTimeout(() => {
+      tasksHelper.searchTasks(userLogin.id, value, store);
+      router.push({ path: `/search`, query: { keyword: value } });
+    }, 500);
+  }
 };
 
 const handleSubmitSearch = (e: Event) => {
-  const value: string = e.target.elements[0].value;
-  tasksHelper.searchTasks(userLogin.id, value, store);
-  router.push({ path: `/search`, query: { keyword: value } });
+  e.preventDefault();
+  const target = e.target as HTMLInputElement | null;
+  if (target) {
+    const value: string = (target.elements[0] as HTMLInputElement).value;
+    tasksHelper.searchTasks(userLogin.id, value, store);
+    router.push({ path: `/search`, query: { keyword: value } });
+  }
 };
 
 watch(

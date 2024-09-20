@@ -8,7 +8,7 @@
     <span :id="task.id" class="task-item-check" @click="handleSelectItem">
       <i :id="task.id" class="fa-solid fa-check"></i>
     </span>
-    <div @click="getTaskDetail(task.id)">
+    <div @click="getTaskDetail(task.id || '')">
       <div class="task-header">{{ task.title }}</div>
       <div class="task-content">
         {{ task.content }}
@@ -32,7 +32,7 @@
               title="Are you sure to delete this task？"
               ok-text="Yes"
               cancel-text="No"
-              @confirm="deleteTask(task.id, task.createdBy)"
+              @confirm="deleteTask(task.id || '', task.createdBy)"
               @cancel="cancel"
             >
               <li class="dropdown-item">
@@ -75,7 +75,7 @@
                   :id="label._id"
                   class="form-check-input"
                   :checked="task.label?.includes(label._id)"
-                  @change="handleCheckLabel($event, label._id, task.id)"
+                  @change="handleCheckLabel($event, label._id, task.id || '')"
                 />
                 <label :for="label._id" class="form-check-label">
                   {{ label.title }}

@@ -17,11 +17,6 @@
 </template>
 
 <script lang="ts" setup>
-import { toast } from "vue3-toastify";
-import {
-  deleteTaskPermanentlyService,
-  recoverTaskService,
-} from "../../services/taskServices";
 import { useStore } from "vuex";
 import * as tasksHelper from "../../helpers/tasksHelper";
 

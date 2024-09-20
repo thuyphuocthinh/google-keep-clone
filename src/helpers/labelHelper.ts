@@ -2,6 +2,7 @@ import { toast } from "vue3-toastify";
 import { labelService } from "../services/myBackEnd/labelService";
 import { STATUS_CODE } from "../constants";
 import { Label } from "../models/label";
+import * as tasksHelper from "./tasksHelper";
 
 export const getLabels = async (store: any, userId: string) => {
     try {
@@ -34,6 +35,7 @@ export const deleteLabel = async (store: any, userId: string, labelId: string) =
         const statusCode: number = response.status;
         if(statusCode === STATUS_CODE.SUCCESS && response.data.success) {
             await getLabels(store, userId);
+            await tasksHelper.getTasksApi(userId, store);
             toast.success(response.data.message);
         }
     } catch (error: any) {
@@ -62,6 +64,6 @@ export const getLabelById = async (store: any, labelId: string) => {
             store.dispatch("labels/setLabelDetailAction", response.data.data);
         }
     } catch (error: any) {
-        toast.error(error.data.message);
+        toast.error(error?.data.message || "Error");
     }
 }

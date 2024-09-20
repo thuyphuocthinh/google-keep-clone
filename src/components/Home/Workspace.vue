@@ -118,7 +118,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onBeforeMount } from "vue";
+import { computed, onMounted } from "vue";
 import { useStore } from "vuex";
 import TaskItem from "./TaskItem.vue";
 import { VueDraggable, DraggableEvent } from "vue-draggable-plus";
@@ -132,16 +132,20 @@ const isLoading: Ref<Boolean> = ref(true);
 const userLogin = store.state.user.userLogin;
 const tasks = computed(() => store.getters["tasksModule/getAllTasks"]);
 
-onBeforeMount(async () => {
-  await tasksHelper.getTasksApi(userLogin.id, store);
-  setTimeout(() => {
+onMounted(async () => {
+  try {
+    await tasksHelper.getTasksApi(userLogin.id, store);
+  } catch (error) {
+    console.error("Failed to fetch tasks:", error);
+    // Handle error appropriately
+  } finally {
     isLoading.value = false;
-  }, 1500);
+  }
 });
 
 // VueDraggable event handlers
 function onAdd(event: DraggableEvent) {
-  const id: number = event.clonedData.id;
+  const id: string = event.clonedData.id;
   // const oldStatus: string = event.from.title;
   const newStatus: string = event.to.title;
   const taskUpdate = {
@@ -152,7 +156,7 @@ function onAdd(event: DraggableEvent) {
 }
 </script>
 
-<style>
+<style scoped>
 .workspace-container {
   max-width: 1000px;
   width: 100%;

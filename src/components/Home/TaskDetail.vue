@@ -87,14 +87,12 @@
 import TaskWidgets from "./TaskWidgets.vue";
 import { useStore } from "vuex";
 import { computed, onMounted, onUpdated, reactive, ref } from "vue";
+import type { Ref } from "vue";
 import { useTextareaAutosize } from "@vueuse/core";
 import { validation } from "../../helpers/validation";
 import { toast } from "vue3-toastify";
-// import { updateTaskService } from "../../services/taskServices";
 import * as tasksHelper from "../../helpers/tasksHelper";
-import { LoadingOutlined } from "@ant-design/icons-vue";
-import { taskServiceApi } from "../../services/myBackEnd/taskServicesApi";
-import { STATUS_CODE } from "../../constants/index";
+import { Task } from "../../models/task";
 const { input, textarea } = useTextareaAutosize();
 const today: Ref<string> = ref(new Date().toISOString().slice(0, 16));
 const store = useStore();
@@ -124,6 +122,7 @@ onUpdated(() => {
   taskUpdate = { ...taskUpdate, ["content"]: input.value };
 });
 
+/*
 const updateTask = () => {
   const result = validation(taskUpdate, ["title", "content", "deadline"]);
   if (result.isValid) {
@@ -145,6 +144,7 @@ const updateTask = () => {
     });
   }
 };
+*/
 
 const updateTaskApi = async () => {
   try {
@@ -156,7 +156,7 @@ const updateTaskApi = async () => {
       "status",
     ]);
     if (result.isValid) {
-      await tasksHelper.updateTaskApi(taskUpdate, store);
+      tasksHelper.updateTaskApi(taskUpdate, store);
     } else {
       const error = result.arrErrors.join(", ");
       toast.error(error);

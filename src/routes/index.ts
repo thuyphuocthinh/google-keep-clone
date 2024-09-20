@@ -54,10 +54,11 @@ const routes = [
       },
     ],
   },
-  // {
-  //   path: "/:pathMatch(.*)*",
-  //   name: PAGE.NOTFOUND,
-  // },
+  {
+    path: "/:pathMatch(.*)*",
+    name: PAGE.NOTFOUND,
+    redirect: {name: PAGE.HOMEPAGE}
+  },
 ];
 
 export const router = createRouter({

@@ -25,7 +25,7 @@ import { useStore } from "vuex";
 import { useRoute } from "vue-router";
 import TaskItem from "../../components/Home/TaskItem.vue";
 import * as labelsHelper from "../../helpers/labelHelper";
-import { computed, onBeforeMount, watch, ref, onMounted } from "vue";
+import { computed, watch, ref, onMounted } from "vue";
 import type { Ref } from "vue";
 import Loading from "../../components/Loading/Loading.vue";
 const store = useStore();
@@ -34,11 +34,14 @@ const labelDetail = computed(() => store.getters["labels/getLabelDetail"]);
 const isLoading: Ref<Boolean> = ref(true);
 
 watch(
-  () => route.params.labelId, // Watch the route's path specifically
-  (newId: string, oldId: string) => {
+  () => route.params.labelId as string | undefined, // Watch the route's path specifically
+  async (newId: string | undefined, oldId: string | undefined) => {
+    console.log("oldId: ", oldId);
+    console.log("newId: ", newId);
+
     if (newId !== oldId && newId) {
       isLoading.value = true;
-      labelsHelper.getLabelById(store, newId);
+      await labelsHelper.getLabelById(store, newId);
       setTimeout(() => {
         isLoading.value = false;
       }, 1000);
@@ -47,9 +50,9 @@ watch(
 );
 
 // life cycle
-onBeforeMount(() => {
+onMounted(async () => {
   const labelId: any = route.params.labelId;
-  labelsHelper.getLabelById(store, labelId);
+  await labelsHelper.getLabelById(store, labelId);
 });
 
 onMounted(() => {

@@ -198,6 +198,7 @@ export const attachLabel = async(userId: string, taskId: string, labelId: string
       await getTasksApi(userId, store);
     } 
   } catch (error: any) {
+    console.log(error);
     toast.error(error.data.message);
   }
 }

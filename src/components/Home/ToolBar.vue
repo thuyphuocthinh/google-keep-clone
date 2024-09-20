@@ -45,17 +45,9 @@
 </template>
 
 <script setup lang="ts">
-import {
-  deleteMultipleTasksService,
-  deleteTaskPermanentlyService,
-  recoverTaskService,
-} from "../../services/taskServices";
-import { computed, onMounted, onUnmounted, onUpdated } from "vue";
+import { computed, onMounted, onUnmounted } from "vue";
 import { useStore } from "vuex";
-import { toast } from "vue3-toastify";
-import type { Ref } from "vue";
 import { ref } from "vue";
-import { Task } from "../../models/task";
 import * as tasksHelper from "../../helpers/tasksHelper";
 
 const store = useStore();
@@ -68,15 +60,18 @@ const userLogin = store.state.user.userLogin;
 
 // methods
 
-const handleClickOutside = (e: Event) => {
-  let id = parseInt(e.target.getAttribute("id"));
-  if (e.target === document.querySelector(".toolbar") || e.target.closest(".toolbar"))
-    return;
-  if (isNaN(id)) {
-    handleCloseToolBar();
-  } else {
-    if (!tasksSelected.value.includes(id) && tasksSelected.value.length === 0) {
+const handleClickOutside = (e: MouseEvent) => {
+  const target = e.target as HTMLElement;
+  if (target) {
+    let id = parseInt(target.getAttribute("id") || "NaN");
+    if (target === document.querySelector(".toolbar") || target.closest(".toolbar"))
+      return;
+    if (isNaN(id)) {
       handleCloseToolBar();
+    } else {
+      if (!tasksSelected.value.includes(id) && tasksSelected.value.length === 0) {
+        handleCloseToolBar();
+      }
     }
   }
 };

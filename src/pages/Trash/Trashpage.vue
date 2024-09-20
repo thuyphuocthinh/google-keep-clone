@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onBeforeMount, onUnmounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import type { Ref } from "vue";
 import { useStore } from "vuex";
 import TaskItem from "../../components/Home/TaskItem.vue";
@@ -33,11 +33,14 @@ const userLogin = store.state.user.userLogin;
 const isLoading: Ref<Boolean> = ref(true);
 const tasksDeleted = computed(() => store.getters["tasksModule/getTasksDeleted"]);
 
-onBeforeMount(() => {
-  tasksHelper.getTasksDeleted(userLogin.id, store);
-  setTimeout(() => {
+onMounted(async () => {
+  try {
+    await tasksHelper.getTasksDeleted(userLogin.id, store);
+  } catch (error) {
+    console.log(error);
+  } finally {
     isLoading.value = false;
-  }, 1000);
+  }
 });
 
 onUnmounted(() => {
