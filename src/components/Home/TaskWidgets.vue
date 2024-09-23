@@ -9,13 +9,29 @@
     <span>
       <i class="fa-solid fa-palette"></i>
     </span>
-    <span>
-      <i class="fa-regular fa-image"></i>
-    </span>
+    <label for="image">
+      <span>
+        <i class="fa-regular fa-image"></i>
+      </span>
+    </label>
+    <input type="file" name="image" id="image" hidden @change="handleUpload" />
   </div>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { useStore } from "vuex";
+
+const emit = defineEmits(["uploadImage"]);
+const store = useStore();
+
+const handleUpload = (e: Event) => {
+  const target = e.target as HTMLInputElement;
+  if (target) {
+    const file: File = (target.files as FileList)[0];
+    store.dispatch("tasksModule/setTaskImageAction", file);
+  }
+};
+</script>
 
 <style>
 .task-tools-left {

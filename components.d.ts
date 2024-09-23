@@ -45,6 +45,7 @@ declare module 'vue' {
     TaskDetail: typeof import('./src/components/Home/TaskDetail.vue')['default']
     TaskItem: typeof import('./src/components/Home/TaskItem.vue')['default']
     TaskWidgets: typeof import('./src/components/Home/TaskWidgets.vue')['default']
+    TestEmit: typeof import('./src/components/Home/TestEmit.vue')['default']
     ToolBar: typeof import('./src/components/Home/ToolBar.vue')['default']
     TrashDelete: typeof import('./src/components/Trash/TrashDelete.vue')['default']
     Workspace: typeof import('./src/components/Home/Workspace.vue')['default']

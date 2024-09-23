@@ -160,6 +160,7 @@ onUnmounted(() => {
 <style>
 .home-sider {
   min-height: 100% !important;
+  margin-top: 80px;
 }
 
 .home-sider.full {

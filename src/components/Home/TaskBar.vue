@@ -16,6 +16,13 @@
         </div>
       </div>
       <div v-if="isShowTaskBarMain" class="taskbar-main">
+        <div v-if="taskImageRef" class="task-image">
+          <img :src="taskImageRef" />
+          <a-button type="primary" @click="handleDeleteImage">
+            <i class="fa-solid fa-trash"></i>
+            <span>Delete</span>
+          </a-button>
+        </div>
         <div class="task-title">
           <input
             type="text"
@@ -90,7 +97,7 @@
 
 <script setup lang="ts">
 import TaskWidgets from "./TaskWidgets.vue";
-import { onMounted, reactive, ref, onUpdated, computed } from "vue";
+import { onMounted, reactive, ref, onUpdated, computed, watch } from "vue";
 import type { Ref } from "vue";
 import { useTextareaAutosize, onClickOutside } from "@vueuse/core";
 import { Task } from "../../models/task";
@@ -107,21 +114,18 @@ const taskTarget = ref(null);
 const today: Ref<string> = ref(new Date().toISOString().slice(0, 16));
 const userLogin = store.state.user.userLogin;
 const statusList = computed(() => store.getters["tasksModule/getStatusList"]);
+const taskImageRef: Ref<string> = ref("");
+const taskImage = computed(() => store.getters["tasksModule/getTaskImage"]);
 
-// handle create task
-const resetValues = () => {
-  input.value = "";
-  task = {
-    title: "",
-    content: input.value,
-    image: "",
-    timeStart: today.value,
-    timeEnd: today.value,
-    label: [],
-    status: STATUS.TODO,
-    createdBy: userLogin.id,
-  };
-};
+watch(
+  () => taskImage.value,
+  (newValue: File, oldValue: File) => {
+    if (newValue !== oldValue && newValue) {
+      taskImageRef.value = URL.createObjectURL(newValue);
+      task.image = newValue;
+    }
+  }
+);
 
 let task: Task = reactive({
   title: "",
@@ -134,10 +138,32 @@ let task: Task = reactive({
   createdBy: userLogin.id,
 });
 
+// handle create task
+const resetValues = () => {
+  input.value = "";
+  task = {
+    title: "",
+    content: input.value,
+    image: "",
+    timeStart: today.value,
+    timeEnd: today.value,
+    status: STATUS.TODO,
+    createdBy: userLogin.id,
+  };
+  taskImageRef.value = "";
+};
+
 const createNewTask = async () => {
   const result = validation(task, ["title", "content"]);
   if (result.isValid) {
-    const response = await taskServiceApi.createTask(task);
+    const formData: FormData = new FormData();
+    for (const key in task) {
+      if (Object.prototype.hasOwnProperty.call(task, key)) {
+        const element = task[key as keyof Task] as string;
+        formData.set(key, element);
+      }
+    }
+    const response = await taskServiceApi.createTask(formData);
     if (response.status === STATUS_CODE.SUCCESS && response.data.success) {
       closeTaskBarMain();
       tasksHelper.getTasksApi(userLogin.id, store);
@@ -158,7 +184,15 @@ const showTaskBarMain = () => {
 
 const closeTaskBarMain = () => {
   isShowTaskBarMain.value = false;
+  store.dispatch("tasksModule/setTaskImageAction", null);
   resetValues();
+};
+
+// handle upload image
+const handleDeleteImage = () => {
+  store.dispatch("tasksModule/setTaskImageAction", null);
+  taskImageRef.value = "";
+  task.image = "";
 };
 
 onClickOutside(taskTarget, () => closeTaskBarMain());
@@ -175,7 +209,7 @@ onMounted(() => {
 
 <style>
 .taskbar {
-  margin-top: 30px;
+  margin-top: 100px;
 }
 
 .taskbar-container {
@@ -228,6 +262,25 @@ onMounted(() => {
 .taskbar-main {
   padding: 10px;
   width: 100%;
+}
+
+.task-image {
+  margin-bottom: 15px;
+  position: relative;
+}
+
+.task-image img {
+  width: 100%;
+}
+
+.task-image button {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  background-color: #000;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .task-title input {

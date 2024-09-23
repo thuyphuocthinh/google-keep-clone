@@ -5,7 +5,8 @@ import { DOMAIN } from '../constants';
 const axiosInstance = axios.create({
   baseURL: DOMAIN,
   timeout: 1000,
-  headers: { 'Content-Type': 'application/json' }
+  headers: { 'Content-Type': 'application/json'},
+  withCredentials: true,
 });
 
 export default axiosInstance;

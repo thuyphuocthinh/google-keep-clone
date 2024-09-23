@@ -1,5 +1,5 @@
 <template>
-  <div class="header-container">
+  <div class="header-container header-container-fixed">
     <div class="container-fluid">
       <header class="header">
         <div class="d-flex justify-content-between align-items-center">
@@ -82,7 +82,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import type { Ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
@@ -135,18 +135,6 @@ const myHandleLogOut = () => {
   }, 200);
 };
 
-const handleScroll = (e: Event) => {
-  const scrollY = window.scrollY;
-  const headerContainer: HTMLElement | null = document.querySelector(".header-container");
-  if (headerContainer) {
-    if (scrollY > 20) {
-      headerContainer.classList.add("header-container-fixed");
-    } else {
-      headerContainer.classList.remove("header-container-fixed");
-    }
-  }
-};
-
 const handleTypingSearch = (e: Event) => {
   const target = e.target as HTMLInputElement | null;
   if (target) {
@@ -177,14 +165,6 @@ watch(
     }
   }
 );
-
-onMounted(() => {
-  window.addEventListener("scroll", handleScroll);
-});
-
-onUnmounted(() => {
-  removeEventListener("scroll", handleScroll);
-});
 </script>
 
 <style scoped>

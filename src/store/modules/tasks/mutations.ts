@@ -39,4 +39,7 @@ export default {
   setShowDeletedPermanentIcon(state: State) {
     state.showDeletedPermanentIcon = false;
   },
+  setTaskImage(state: State, taskImage: File) {
+    state.taskImage = taskImage;
+  }
 };

@@ -7,7 +7,7 @@ import Homepage from "../pages/Home/Homepage.vue";
 import Trashpage from "../pages/Trash/Trashpage.vue";
 import Search from "../pages/Search/Search.vue";
 import { PAGE} from "../constants";
-import { getAccessToken, removeToken } from '../helpers/getToken';
+import { getToken, removeToken } from "../helpers/getToken";
 import Labelpage from "../pages/Label/Labelpage.vue";
 
 const routes = [
@@ -66,15 +66,19 @@ export const router = createRouter({
   routes,
 });
 
-router.beforeEach(async (to: any, from: any, next: any) => {
-  const accessToken: string = getAccessToken();
-  if(to.name === PAGE.LOGIN && accessToken || to.name === PAGE.REGISTER && accessToken) {
-    return next({name: PAGE.HOMEPAGE});
+router.beforeEach((to, from, next) => {
+  const accessToken: string = getToken();
+  if (to.name === PAGE.LOGIN || to.name === PAGE.REGISTER) {
+    if (accessToken) {
+      return next({ name: PAGE.HOMEPAGE });
+    } else {
+      removeToken();
+      return next(); 
+    }
   }
   if (to.name !== PAGE.LOGIN && !accessToken && to.name !== PAGE.REGISTER) {
-    next({ name: PAGE.LOGIN });
-    // removeAccessToken();
-    // removeRefreshToken();
-    removeToken();
-  } else next();
+    removeToken(); 
+    return next({ name: PAGE.LOGIN }); 
+  }
+  next();
 });

@@ -5,6 +5,7 @@
     { "path": "./tsconfig.node.json" }
   ],
   "compilerOptions": {
+    /* other configs */
     "target": "esnext",
     "module": "esnext",
     "strict": true,

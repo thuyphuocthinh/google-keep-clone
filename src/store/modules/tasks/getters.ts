@@ -35,4 +35,7 @@ export default {
   showDeletedPermanentIcon(state: State) {
     return state.showDeletedPermanentIcon;
   },
+  getTaskImage(state: State) {
+    return state.taskImage;
+  }
 };

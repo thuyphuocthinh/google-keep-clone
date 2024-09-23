@@ -1,3 +1,4 @@
+import axiosInstanceFormData from "../../api/axiosInstanceFormData";
 import { DOMAIN } from "../../constants";
 import { Task } from "../../models/task";
 import { BaseService } from "../baseService";
@@ -12,14 +13,14 @@ class TaskServiceApi extends BaseService {
   getTaskDetail(taskId: string) {
     return this.get(`${DOMAIN}/tasks/getDetail/${taskId}`);
   }
-  createTask(task: Task) {
-    return this.post(`${DOMAIN}/tasks/create`, task);
+  createTask(task: FormData) {
+    return axiosInstanceFormData.post(`${DOMAIN}/tasks/create`, task);
   }
   getStatusList() {
     return this.get(`${DOMAIN}/status/getListTaskStatus`);
   }
-  updateTask(taskUpdate: Task) {
-    return this.patch(`${DOMAIN}/tasks/updateTask`, taskUpdate);
+  updateTask(task: FormData) {
+    return axiosInstanceFormData.patch(`${DOMAIN}/tasks/updateTask`, task);
   }
   deleteTask(taskId: string) {
     return this.patch(`${DOMAIN}/tasks/deleteTask/${taskId}`, {});

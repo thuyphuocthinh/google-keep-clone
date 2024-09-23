@@ -1,5 +1,9 @@
 <template>
   <div class="task-detail">
+    <div v-if="taskImageRef || taskDetail.image" class="task-image">
+      <img v-if="taskImageRef" :src="taskImageRef" :alt="taskImageRef" />
+      <img v-else :src="taskDetail.image" :alt="taskDetail.image" />
+    </div>
     <div class="task-header">
       <input
         type="text"
@@ -77,8 +81,8 @@
     <div v-if="!taskDetail.deleted" class="task-button">
       <a-button type="default" @click="cancel">Cancel</a-button>
       <a-button type="primary" @click="updateTaskApi" :loading="showLoading"
-        >Save changes</a-button
-      >
+        >Save changes
+      </a-button>
     </div>
   </div>
 </template>
@@ -86,7 +90,7 @@
 <script lang="ts" setup>
 import TaskWidgets from "./TaskWidgets.vue";
 import { useStore } from "vuex";
-import { computed, onMounted, onUpdated, reactive, ref } from "vue";
+import { computed, onMounted, onUpdated, reactive, ref, watch } from "vue";
 import type { Ref } from "vue";
 import { useTextareaAutosize } from "@vueuse/core";
 import { validation } from "../../helpers/validation";
@@ -99,6 +103,9 @@ const store = useStore();
 const taskDetail = computed(() => store.state.tasksModule.taskDetail);
 const showLoading = computed(() => store.getters["loading/getLoadingState"]);
 const statusList = computed(() => store.getters["tasksModule/getStatusList"]);
+const taskImageRef: Ref<string> = ref("");
+const userLogin = store.state.user.userLogin;
+const taskImage = computed(() => store.getters["tasksModule/getTaskImage"]);
 
 let taskUpdate: Task = reactive({
   id: taskDetail.value.id,
@@ -113,6 +120,16 @@ let taskUpdate: Task = reactive({
   createdBy: taskDetail.value.createdBy,
 });
 
+watch(
+  () => taskImage.value,
+  (newValue: File, oldValue: File) => {
+    if (newValue !== oldValue && newValue) {
+      taskImageRef.value = URL.createObjectURL(newValue);
+      taskUpdate.image = newValue;
+    }
+  }
+);
+
 onMounted(() => {
   input.value = taskDetail.value.content;
   tasksHelper.getStatusListApi(store);
@@ -121,6 +138,37 @@ onMounted(() => {
 onUpdated(() => {
   taskUpdate = { ...taskUpdate, ["content"]: input.value };
 });
+
+const updateTaskApi = async () => {
+  try {
+    const result = validation(taskUpdate, [
+      "title",
+      "content",
+      "timeStart",
+      "timeEnd",
+      "status",
+    ]);
+    if (result.isValid) {
+      const formData: FormData = new FormData();
+      for (const key in taskUpdate) {
+        if (Object.prototype.hasOwnProperty.call(taskUpdate, key)) {
+          const element = taskUpdate[key as keyof Task] as string;
+          formData.set(key, element);
+        }
+      }
+      tasksHelper.updateTaskApi(formData, userLogin.id, store);
+    } else {
+      const error = result.arrErrors.join(", ");
+      toast.error(error);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const cancel = () => {
+  store.dispatch("modal/closeModalAction");
+};
 
 /*
 const updateTask = () => {
@@ -145,30 +193,6 @@ const updateTask = () => {
   }
 };
 */
-
-const updateTaskApi = async () => {
-  try {
-    const result = validation(taskUpdate, [
-      "title",
-      "content",
-      "timeStart",
-      "timeEnd",
-      "status",
-    ]);
-    if (result.isValid) {
-      tasksHelper.updateTaskApi(taskUpdate, store);
-    } else {
-      const error = result.arrErrors.join(", ");
-      toast.error(error);
-    }
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const cancel = () => {
-  store.dispatch("modal/closeModalAction");
-};
 </script>
 
 <style>

@@ -8,6 +8,7 @@ export interface State {
   statusList: TaskStatus[];
   showDeletedPermanentIcon: Boolean;
   tasksDeleted: Task[];
+  taskImage: File;
 }
 
 export default {
@@ -18,4 +19,5 @@ export default {
   statusList: [] as TaskStatus[],
   showDeletedPermanentIcon: false,
   tasksDeleted: [] as Task[],
+  taskImage: File,
 };

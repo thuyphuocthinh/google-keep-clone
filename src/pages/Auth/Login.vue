@@ -68,14 +68,13 @@ import { reactive, computed, ref } from "vue";
 import type { Ref } from "vue";
 import { authService } from "../../services/myBackEnd/authService";
 import Cookies from "js-cookie";
+import { useStore } from "vuex";
 import { UserOutlined, LockOutlined } from "@ant-design/icons-vue";
 import { TOKEN } from "../../constants/index";
 import { toast } from "vue3-toastify";
 import { useRouter } from "vue-router";
-import { useStore } from "vuex";
 import { USER_SIGN_IN } from "../../models/user";
-// import { authServiceSuco } from "../../services/sNote/authServiceSuco";
-// import { STATUS_CODE } from "../../constants/index";
+import { setToken } from "../../helpers/getToken";
 
 const loading: Ref<Boolean> = ref(false);
 const router = useRouter();
@@ -142,7 +141,7 @@ const myOnFinish = (values: any) => {
           username: data.username,
         };
         // store token to cookies
-        Cookies.set(TOKEN, token);
+        setToken(token);
         // dispatch user to reducer
         store.dispatch("user/setUserLoginAction", user);
         // push to homepage

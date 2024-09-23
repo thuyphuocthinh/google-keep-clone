@@ -1,8 +1,17 @@
+// src/api/axiosInstance.js
+import axios from 'axios';
+import { DOMAIN } from '../constants';
 import {  getToken, removeToken } from './../helpers/getToken';
-import axiosInstance from './axiosInstance';
 import { STATUS_CODE } from '../constants';
 
-axiosInstance.interceptors.request.use(
+const axiosInstanceFormData = axios.create({
+  baseURL: DOMAIN,
+  timeout: 5000,
+  headers: { 'Content-Type': 'multipart/form-data'},
+  withCredentials: true,
+});
+
+axiosInstanceFormData.interceptors.request.use(
   (request) => {
     const accessToken = getToken();
     request.headers['Cache-Control'] = 'no-cache';
@@ -17,7 +26,7 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-axiosInstance.interceptors.response.use(
+axiosInstanceFormData.interceptors.response.use(
   (response) => {
     return response;  
   },
@@ -34,4 +43,5 @@ axiosInstance.interceptors.response.use(
   }
 );
 
-export default axiosInstance;
+export default axiosInstanceFormData;
+

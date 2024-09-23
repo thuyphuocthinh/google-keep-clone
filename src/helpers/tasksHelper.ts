@@ -14,13 +14,13 @@ export const getTasksApi = async (userId: string, store: any) => {
   }
 };
 
-export const updateTaskApi = (taskUpdate: Task, store: any) => {
+export const updateTaskApi = (taskUpdate: FormData, userId: string, store: any) => {
   try {
     store.dispatch("loading/showLoadingAction");
     setTimeout(async () => {
       const result = await taskServiceApi.updateTask(taskUpdate);
       if (result.status === STATUS_CODE.SUCCESS && result.data.success) {
-        await getTasksApi(taskUpdate.createdBy, store);
+        await getTasksApi(userId, store);
         store.dispatch("modal/closeModalAction");
         toast.success(result.data.message);
       } else {

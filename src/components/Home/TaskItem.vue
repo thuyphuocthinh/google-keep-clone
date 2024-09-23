@@ -8,6 +8,9 @@
     <span :id="task.id" class="task-item-check" @click="handleSelectItem">
       <i :id="task.id" class="fa-solid fa-check"></i>
     </span>
+    <div v-if="task.image" class="task-image">
+      <img :src="task.image" :alt="task.image" />
+    </div>
     <div @click="getTaskDetail(task.id || '')">
       <div class="task-header">{{ task.title }}</div>
       <div class="task-content">
@@ -20,7 +23,6 @@
       </div>
     </div>
     <div class="task-widgets">
-      <TaskWidgets v-if="!task.deleted" :id="task.id"> </TaskWidgets>
       <div v-if="!task.deleted" class="task-tools-right">
         <span @click="openDropdown" ref="openDropdownBtnRef">
           <i class="fa-solid fa-ellipsis-vertical"></i>
@@ -85,13 +87,12 @@
           </div>
         </div>
       </div>
-      <TrashDelete v-if="task.deleted" :id="task.id" />
+      <TrashDelete v-if="task.deleted" :id="task.id || ''" />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import TaskWidgets from "./TaskWidgets.vue";
 import TaskDetail from "./TaskDetail.vue";
 import TrashDelete from "../Trash/TrashDelete.vue";
 import { Task } from "../../models/task";
@@ -266,7 +267,10 @@ onUnmounted(() => {
 .task-widgets {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+}
+
+.task-tools-right {
+  margin-left: auto;
 }
 
 .label-popup {

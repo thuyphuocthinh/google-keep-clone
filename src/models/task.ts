@@ -2,7 +2,7 @@ export interface Task {
   id?: string;
   title: string;
   content: string;
-  image?: string;
+  image?: string | File;
   backgroundColor?: string;
   timeStart: string;
   timeEnd: string;
