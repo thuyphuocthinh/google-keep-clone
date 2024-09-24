@@ -1,5 +1,5 @@
 <template>
-  <div class="label my-4">
+  <div class="label">
     <div v-if="isLoading" class="loading-spinner">
       <Loading />
     </div>
@@ -36,9 +36,6 @@ const isLoading: Ref<Boolean> = ref(true);
 watch(
   () => route.params.labelId as string | undefined, // Watch the route's path specifically
   async (newId: string | undefined, oldId: string | undefined) => {
-    console.log("oldId: ", oldId);
-    console.log("newId: ", newId);
-
     if (newId !== oldId && newId) {
       isLoading.value = true;
       await labelsHelper.getLabelById(store, newId);
@@ -61,4 +58,8 @@ onMounted(() => {
   }, 1000);
 });
 </script>
-<style></style>
+<style scoped>
+.label {
+  margin-top: 100px;
+}
+</style>

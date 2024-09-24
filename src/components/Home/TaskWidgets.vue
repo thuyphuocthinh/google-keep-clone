@@ -1,16 +1,7 @@
 <template>
   <div class="task-tools-left">
-    <span>
-      <i class="fa-regular fa-bell"></i>
-    </span>
-    <span>
-      <i class="fa-solid fa-user-plus"></i>
-    </span>
-    <span>
-      <i class="fa-solid fa-palette"></i>
-    </span>
     <label for="image">
-      <span>
+      <span class="task-tools-image">
         <i class="fa-regular fa-image"></i>
       </span>
     </label>
@@ -39,7 +30,7 @@ const handleUpload = (e: Event) => {
   align-items: center;
 }
 
-.task-tools-left span,
+.task-tools-left .task-tools-image,
 .task-tools-right span {
   display: flex;
   width: 35px;

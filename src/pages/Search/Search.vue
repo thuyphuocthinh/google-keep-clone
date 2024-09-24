@@ -1,5 +1,5 @@
 <template>
-  <div class="search my-4">
+  <div class="search">
     <div class="search-container">
       <div class="container">
         <h6 class="mb-4 text-center">Kết quả tìm kiếm</h6>
@@ -28,4 +28,8 @@ const store = useStore();
 const tasksSearch = computed(() => store.getters["tasksModule/getTasksSearch"]);
 </script>
 
-<style></style>
+<style scoped>
+.search {
+  margin-top: 100px;
+}
+</style>

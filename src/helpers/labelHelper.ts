@@ -12,6 +12,7 @@ export const getLabels = async (store: any, userId: string) => {
             store.dispatch("labels/setLabelsAction", response.data.data);
         }
     } catch (error: any) {
+        console.log(error);
         toast.error(error.data.message);
     }
 }

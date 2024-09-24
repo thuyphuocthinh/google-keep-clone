@@ -1,16 +1,17 @@
 import { toast } from "vue3-toastify";
 import { STATUS_CODE } from "../constants";
-import { Task } from "../models/task";
 import { taskServiceApi } from "../services/myBackEnd/taskServicesApi";
 
 export const getTasksApi = async (userId: string, store: any) => {
   try {
     const result = await taskServiceApi.getTasksList(userId);
+    console.log("get tasks result: ", result);
     if (result.status === STATUS_CODE.SUCCESS && result.data.success) {
       store.dispatch("tasksModule/setTasksAction", result.data.data);
     }
-  } catch (error) {
+  } catch (error: any) {
     console.log(error);
+    toast.error(error.data?.message);
   }
 };
 

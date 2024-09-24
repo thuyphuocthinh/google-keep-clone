@@ -1,6 +1,5 @@
 export const dateString = () => {
   let dtToday = new Date();
-
   let month: number | string = dtToday.getMonth() + 1;
   let day: number | string = dtToday.getDate();
   let year: number | string = dtToday.getFullYear();
@@ -13,3 +12,4 @@ export const dateString = () => {
   let maxDate = year + "-" + month + "-" + day;
   return maxDate;
 };
+

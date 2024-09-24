@@ -2,12 +2,14 @@ export interface Task {
   id?: string;
   title: string;
   content: string;
-  image?: string | File;
+  image?: string | File | undefined;
   backgroundColor?: string;
   timeStart: string;
   timeEnd: string;
   label?: string[];
   labelTitle?: string[];
+  remindedAtString?: String;
+  remindedAtDate?: Date | null;
   status: string;
   createdBy: string; // creator's id
   createdAt?: string;
@@ -16,6 +18,7 @@ export interface Task {
   deleted?: boolean;
   deletedAt?: string;
   deletedBy?: string;
+  reminderId: string;
 }
 
 export interface TaskStatus {

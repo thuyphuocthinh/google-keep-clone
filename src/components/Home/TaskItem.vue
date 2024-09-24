@@ -16,6 +16,7 @@
       <div class="task-content">
         {{ task.content }}
       </div>
+
       <div class="task-labels">
         <a-tag color="green" v-for="(label, index) in task.labelTitle" :key="index">
           {{ label }}
@@ -23,6 +24,17 @@
       </div>
     </div>
     <div class="task-widgets">
+      <div class="task-tools-left">
+        <div class="task-reminder" v-if="task.remindedAtString">
+          <a-tag color="red">
+            <span> <i class="fa-regular fa-bell"></i></span>
+            {{ task.remindedAtString }}
+            <span class="close-reminder" @click="handleDeleteReminder">
+              <i class="fa-solid fa-xmark"></i>
+            </span>
+          </a-tag>
+        </div>
+      </div>
       <div v-if="!task.deleted" class="task-tools-right">
         <span @click="openDropdown" ref="openDropdownBtnRef">
           <i class="fa-solid fa-ellipsis-vertical"></i>
@@ -31,7 +43,7 @@
           <ul class="dropdown-list">
             <a-popconfirm
               ref="popconfirmRef"
-              title="Are you sure to delete this task？"
+              title="Are you sure to delete this task?"
               ok-text="Yes"
               cancel-text="No"
               @confirm="deleteTask(task.id || '', task.createdBy)"
@@ -49,6 +61,12 @@
                 <i class="fa-solid fa-tag"></i>
               </span>
               Manage label
+            </li>
+            <li class="dropdown-item" @click="openReminderPopup">
+              <span class="sider-icon">
+                <i class="fa-solid fa-clock"></i>
+              </span>
+              Reminder
             </li>
           </ul>
         </div>
@@ -86,6 +104,19 @@
             </div>
           </div>
         </div>
+        <div v-if="showReminder" ref="reminderPopupRef" class="reminder-popup">
+          <label for="remindedAt" class="form-label fw-bold">Select time to remind</label>
+          <input
+            type="datetime-local"
+            class="form-control"
+            id="remindedAt"
+            name="remindedAt"
+            style="width: 200px"
+            v-model="task.timeEnd"
+            :min="today"
+            @change="handleSelectReminder"
+          />
+        </div>
       </div>
       <TrashDelete v-if="task.deleted" :id="task.id || ''" />
     </div>
@@ -102,11 +133,10 @@ import type { Ref } from "vue";
 import { taskServiceApi } from "../../services/myBackEnd/taskServicesApi";
 import { STATUS_CODE } from "../../constants/index";
 import * as tasksHelper from "../../helpers/tasksHelper";
+import * as reminderHelper from "../../helpers/reminderHelper";
 import { onClickOutside } from "@vueuse/core";
 import { toast } from "vue3-toastify";
-// import { getTaskDetailService } from "../../services/myBackEnd/taskServices";
-// import { deleteTaskService } from "../../services/taskServices";
-
+import { Reminder } from "../../models/reminder";
 const store = useStore();
 const props = defineProps<{
   task: Task;
@@ -118,10 +148,13 @@ const dropdownRef = ref<HTMLElement | null>(null);
 const popconfirmRef = ref<HTMLElement | null>(null);
 const openDropdownBtnRef = ref<HTMLElement | null>(null);
 const labelPopupRef = ref<HTMLElement | null>(null);
+const reminderPopupRef = ref<HTMLElement | null>(null);
 const showEditLabel: Ref<Boolean> = ref(false);
+const showReminder: Ref<Boolean> = ref(false);
 const labels = computed(() => store.getters["labels/getLabels"]);
 const labelSearch: Ref<string> = ref("");
 const userLogin = store.state.user.userLogin;
+const today: Ref<string> = ref(new Date().toISOString().slice(0, 16));
 
 // methods
 const getTaskDetail = async (id: string) => {
@@ -174,6 +207,13 @@ const handleClickOutside = (event: MouseEvent) => {
 
 const openLabelPopup = () => {
   showEditLabel.value = true;
+  showReminder.value = false;
+  closeDropdown();
+};
+
+const openReminderPopup = () => {
+  showReminder.value = true;
+  showEditLabel.value = false;
   closeDropdown();
 };
 
@@ -186,7 +226,26 @@ const handleCheckLabel = (event: any, labelId: string, taskId: string) => {
   }
 };
 
+const handleSelectReminder = (e: Event) => {
+  const target: HTMLInputElement | null = e.target as HTMLInputElement;
+  if (target) {
+    const value = target.value;
+    const date = new Date(value).toISOString();
+    const reminder: Reminder = {
+      taskId: props.task.id,
+      createdBy: userLogin.id,
+      remindedAt: date,
+    };
+    reminderHelper.create(reminder, userLogin.id, store);
+  }
+};
+
+const handleDeleteReminder = () => {
+  reminderHelper.deleteById(props.task.reminderId, userLogin.id, store);
+};
+
 onClickOutside(labelPopupRef, () => (showEditLabel.value = false));
+onClickOutside(reminderPopupRef, () => (showReminder.value = false));
 
 // life cycle hooks
 onMounted(() => {
@@ -256,6 +315,16 @@ onUnmounted(() => {
   overflow-y: hidden;
 }
 
+.close-reminder {
+  cursor: pointer;
+  display: none;
+  color: #000;
+}
+
+.task-reminder:hover .close-reminder {
+  display: inline-block;
+}
+
 .task-labels {
   margin: 10px 0;
   display: flex;
@@ -273,7 +342,8 @@ onUnmounted(() => {
   margin-left: auto;
 }
 
-.label-popup {
+.label-popup,
+.reminder-popup {
   position: absolute;
   background-color: #fff;
   z-index: 50;
@@ -282,6 +352,7 @@ onUnmounted(() => {
   padding: 10px;
   border-radius: 10px;
 }
+
 .label-input {
   display: flex;
   align-items: center;

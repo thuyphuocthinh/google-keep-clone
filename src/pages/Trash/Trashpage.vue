@@ -1,5 +1,5 @@
 <template>
-  <div class="trash my-4">
+  <div class="trash">
     <div v-if="isLoading" class="loading-spinner">
       <Loading />
     </div>
@@ -49,6 +49,9 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.trash {
+  margin-top: 100px;
+}
 h6 {
   text-align: center;
   font-weight: 300;
