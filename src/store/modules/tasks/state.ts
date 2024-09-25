@@ -3,12 +3,13 @@ import { Task, TaskStatus, TasksByStatus } from "../../../models/task";
 export interface State {
   tasks: TasksByStatus[];
   taskDetail: Task;
-  tasksSelected: number[];
+  tasksSelected: string[];
   tasksSearch: Task[];
   statusList: TaskStatus[];
   showDeletedPermanentIcon: Boolean;
   tasksDeleted: Task[];
   taskImage: File;
+  taskReminded: Task[];
 }
 
 export default {
@@ -20,4 +21,5 @@ export default {
   showDeletedPermanentIcon: false,
   tasksDeleted: [] as Task[],
   taskImage: File,
+  taskReminded: [] as Task[],
 };

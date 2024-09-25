@@ -8,9 +8,9 @@ export default {
   setTaskDetail(state: State, taskDetail: Task) {
     state.taskDetail = taskDetail;
   },
-  setTasksSelected(state: State, id: number) {
+  setTasksSelected(state: State, id: string) {
     const findIndex = state.tasksSelected.findIndex(
-      (item: number) => item === id
+      (item: string) => item === id
     );
     if (findIndex !== -1) {
       state.tasksSelected.splice(findIndex, 1);
@@ -41,5 +41,8 @@ export default {
   },
   setTaskImage(state: State, taskImage: File) {
     state.taskImage = taskImage;
+  },
+  setTaskReminded(state: State, taskReminded: Task[]) {
+    state.taskReminded = taskReminded;
   }
 };

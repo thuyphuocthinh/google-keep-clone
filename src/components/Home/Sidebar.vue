@@ -12,12 +12,12 @@
           </router-link>
         </li>
         <li class="sider-item">
-          <a href="#" class="sider-link">
+          <router-link to="/reminder" exact-active-class="active" class="sider-link">
             <span class="sider-icon">
               <i class="fa-regular fa-bell"></i>
             </span>
             <span class="sider-title"> Lời nhắc </span>
-          </a>
+          </router-link>
         </li>
         <li v-for="(label, index) in labels" :key="index" class="sider-item">
           <router-link
@@ -70,11 +70,11 @@
           </router-link>
         </li>
         <li class="sider-item">
-          <a href="#" class="sider-link">
+          <router-link to="/reminder" exact-active-class="active" class="sider-link">
             <span class="sider-icon">
               <i class="fa-regular fa-bell"></i>
             </span>
-          </a>
+          </router-link>
         </li>
 
         <li class="sider-item">

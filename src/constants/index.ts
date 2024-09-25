@@ -17,7 +17,8 @@ export const PAGE = {
   NOTFOUND: "NOTFOUND",
   TRASH: "TRASH",
   SEARCH: "SEARCH",
-  LABEL: "LABEL"
+  LABEL: "LABEL",
+  REMINDER: "REMINDER"
 };
 
 export enum STATUS_CODE {

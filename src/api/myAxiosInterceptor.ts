@@ -19,7 +19,7 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
   (response) => {
-    console.log("response success: ", response);
+    // console.log("response success: ", response);
     return response;  
   },
   async (error) => {

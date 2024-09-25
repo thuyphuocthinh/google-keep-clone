@@ -9,6 +9,7 @@ import Search from "../pages/Search/Search.vue";
 import { PAGE} from "../constants";
 import { getToken, removeToken } from "../helpers/getToken";
 import Labelpage from "../pages/Label/Labelpage.vue";
+import Reminder from "../pages/Reminder/Reminder.vue";
 
 const routes = [
   {
@@ -34,6 +35,11 @@ const routes = [
         path: "labels/:labelId",
         name: PAGE.LABEL,
         component: Labelpage
+      },
+      {
+        path: "reminder",
+        name: PAGE.REMINDER,
+        component: Reminder
       }
     ],
   },

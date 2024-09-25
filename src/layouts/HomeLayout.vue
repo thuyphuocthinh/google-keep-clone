@@ -3,10 +3,7 @@
   <ToolBar />
   <a-layout class="home-layout">
     <Sidebar />
-    <a-layout-content
-      class="home-content"
-      :class="isSiderFull ? 'full' : 'icon'"
-    >
+    <a-layout-content class="home-content" :class="isSiderFull ? 'full' : 'icon'">
       <div class="container">
         <!-- <slot></slot> -->
         <!-- I will change to router-view after that -->
@@ -17,18 +14,28 @@
 </template>
 
 <script lang="ts" setup>
-import { inject, computed, ref } from "vue";
-import type { Ref } from "vue";
+import { computed, onMounted, onUpdated } from "vue";
+import { socket } from "../socket";
+import { useStore } from "vuex";
 import Header from "../components/Home/Header.vue";
 import Sidebar from "../components/Home/Sidebar.vue";
 import ToolBar from "../components/Home/ToolBar.vue";
-import { useStore } from "vuex";
-import Cookies from "js-cookie";
-import { TOKEN } from "../constants/index";
+// import { toast } from "vue3-toastify";
+
 const store = useStore();
 const isSiderFull = computed(() => store.state.sidebar.isSiderFull);
-const token: Ref<string> = ref(Cookies.get(TOKEN));
+const userLogin = store.state.user.userLogin;
 
+onMounted(() => {
+  socket.emit("registerUser", userLogin.id);
+});
+
+onUpdated(() => {
+  // socket.emit("registerUser", userLogin.id);
+  // socket.on("remind_event", (message: any) => {
+  //   toast.success(message);
+  // });
+});
 </script>
 
 <style>
@@ -42,9 +49,9 @@ const token: Ref<string> = ref(Cookies.get(TOKEN));
   min-height: 100% !important;
 }
 
-.home-content {
-  /* border: 1px solid black; */
-}
+/* .home-content { */
+/* border: 1px solid black; */
+/* } */
 
 .home-content.full {
   background-color: #fff !important;

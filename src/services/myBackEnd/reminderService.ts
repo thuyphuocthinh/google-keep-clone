@@ -9,6 +9,9 @@ class ReminderService extends BaseService {
     deleteById(reminderId: string) {
         return this.patch(`${DOMAIN}/reminder/delete/${reminderId}`, {});
     }
+    remind(userId: string) {
+        return this.get(`${DOMAIN}/reminder/remind/${userId}`);
+    }
 }
 
 export const reminderService = new ReminderService();

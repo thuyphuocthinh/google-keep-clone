@@ -1,6 +1,5 @@
 import axiosInstanceFormData from "../../api/axiosInstanceFormData";
 import { DOMAIN } from "../../constants";
-import { Task } from "../../models/task";
 import { BaseService } from "../baseService";
 
 class TaskServiceApi extends BaseService {
@@ -63,6 +62,9 @@ class TaskServiceApi extends BaseService {
   }
   detachLabel(labelId: string, taskId: string) {
     return this.patch(`${DOMAIN}/tasks/detachLabel/${taskId}/${labelId}`, {})
+  }
+  getTaskReminded(userId: string) {
+    return this.get(`${DOMAIN}/tasks/getTasksRemindedByUser/${userId}`);
   }
 }
 

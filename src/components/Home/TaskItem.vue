@@ -230,7 +230,8 @@ const handleSelectReminder = (e: Event) => {
   const target: HTMLInputElement | null = e.target as HTMLInputElement;
   if (target) {
     const value = target.value;
-    const date = new Date(value).toISOString();
+    const date = new Date(value).toLocaleString();
+    console.log("date selected: ", date);
     const reminder: Reminder = {
       taskId: props.task.id,
       createdBy: userLogin.id,

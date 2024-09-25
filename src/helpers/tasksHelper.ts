@@ -5,7 +5,7 @@ import { taskServiceApi } from "../services/myBackEnd/taskServicesApi";
 export const getTasksApi = async (userId: string, store: any) => {
   try {
     const result = await taskServiceApi.getTasksList(userId);
-    console.log("get tasks result: ", result);
+    // console.log("get tasks result: ", result);
     if (result.status === STATUS_CODE.SUCCESS && result.data.success) {
       store.dispatch("tasksModule/setTasksAction", result.data.data);
     }
@@ -213,5 +213,16 @@ export const detachLabel = async(userId: string, taskId: string, labelId: string
     } 
   } catch (error: any) {
     toast.error(error.data.message);
+  }
+}
+
+export const getTaskReminded = async (userId: string, store: any) => {
+  try {
+    const result = await taskServiceApi.getTaskReminded(userId);
+    if(result.status === STATUS_CODE.SUCCESS) {
+      store.dispatch("tasksModule/setTasksRemindedAction", result.data.data);
+    }
+  } catch (error) {
+    console.log(error);
   }
 }

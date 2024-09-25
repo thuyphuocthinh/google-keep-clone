@@ -26,6 +26,9 @@ export default {
     commit("setShowDeletedPermanentIcon");
   },
   setTaskImageAction({commit} : any, taskImage: File) {
-    commit("setTaskImage", taskImage)
+    commit("setTaskImage", taskImage);
+  },
+  setTasksRemindedAction({commit}: any, taskReminded: Task[]) {
+    commit("setTaskReminded", taskReminded);
   }
 };

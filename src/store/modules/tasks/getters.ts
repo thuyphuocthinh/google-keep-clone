@@ -20,7 +20,7 @@ export default {
   //     (task: Task) => task.status === STATUS.DONE && !task.deleted
   //   );
   // },
-  getTasksSelected(state: State): number[] {
+  getTasksSelected(state: State): string[] {
     return state.tasksSelected;
   },
   getTasksDeleted(state: State): Task[] {
@@ -37,5 +37,8 @@ export default {
   },
   getTaskImage(state: State) {
     return state.taskImage;
+  },
+  getTaskReminded(state: State) {
+    return state.taskReminded;
   }
 };
