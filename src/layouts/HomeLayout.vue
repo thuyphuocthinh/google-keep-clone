@@ -14,13 +14,13 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, onUpdated } from "vue";
+import { computed, onMounted, onUnmounted, onUpdated } from "vue";
 import { socket } from "../socket";
 import { useStore } from "vuex";
 import Header from "../components/Home/Header.vue";
 import Sidebar from "../components/Home/Sidebar.vue";
 import ToolBar from "../components/Home/ToolBar.vue";
-// import { toast } from "vue3-toastify";
+import { toast } from "vue3-toastify";
 
 const store = useStore();
 const isSiderFull = computed(() => store.state.sidebar.isSiderFull);
@@ -28,13 +28,15 @@ const userLogin = store.state.user.userLogin;
 
 onMounted(() => {
   socket.emit("registerUser", userLogin.id);
+  socket.on("remind_event", (mesasge: any) => {
+    toast.success(`Lời nhắc: ${mesasge} `, {
+      autoClose: false,
+    });
+  });
 });
 
-onUpdated(() => {
-  // socket.emit("registerUser", userLogin.id);
-  // socket.on("remind_event", (message: any) => {
-  //   toast.success(message);
-  // });
+onUnmounted(() => {
+  socket.off("remind_event");
 });
 </script>
 

@@ -6,7 +6,7 @@
     <div v-else class="trash-container">
       <div class="container">
         <h5 class="mb-4">Lời nhắc</h5>
-        <div class="row">
+        <div class="row" v-if="taskReminded.length > 0">
           <div
             v-for="task in taskReminded"
             :key="task.id"
@@ -15,6 +15,7 @@
             <TaskItem :task="task" />
           </div>
         </div>
+        <p v-else>Không có task nào</p>
       </div>
     </div>
   </div>

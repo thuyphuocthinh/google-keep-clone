@@ -242,7 +242,12 @@ const handleSelectReminder = (e: Event) => {
 };
 
 const handleDeleteReminder = () => {
-  reminderHelper.deleteById(props.task.reminderId, userLogin.id, store);
+  reminderHelper.deleteById(
+    props.task.id || "",
+    props.task.reminderId,
+    userLogin.id,
+    store
+  );
 };
 
 onClickOutside(labelPopupRef, () => (showEditLabel.value = false));

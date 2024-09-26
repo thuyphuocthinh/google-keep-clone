@@ -42,14 +42,6 @@
           </a>
         </li>
         <li class="sider-item">
-          <a href="#" class="sider-link">
-            <span class="sider-icon">
-              <i class="fa-solid fa-download"></i>
-            </span>
-            <span class="sider-title"> Lưu trữ </span>
-          </a>
-        </li>
-        <li class="sider-item">
           <router-link to="/trash" exact-active-class="active" class="sider-link">
             <span class="sider-icon">
               <i class="fa-solid fa-trash"></i>
@@ -76,18 +68,10 @@
             </span>
           </router-link>
         </li>
-
         <li class="sider-item">
           <a href="#" class="sider-link" @click="openLabelModal">
             <span class="sider-icon">
               <i class="fa-solid fa-pen-to-square"></i>
-            </span>
-          </a>
-        </li>
-        <li class="sider-item">
-          <a href="#" class="sider-link">
-            <span class="sider-icon">
-              <i class="fa-solid fa-download"></i>
             </span>
           </a>
         </li>
