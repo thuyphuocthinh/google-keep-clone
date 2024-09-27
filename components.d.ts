@@ -38,6 +38,7 @@ declare module 'vue' {
     LabelDetail: typeof import('./src/components/Label/LabelDetail.vue')['default']
     Loading: typeof import('./src/components/Loading/Loading.vue')['default']
     Modal: typeof import('./src/components/Modal/Modal.vue')['default']
+    Notifcation: typeof import('./src/components/notifcation/Notifcation.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Sidebar: typeof import('./src/components/Home/Sidebar.vue')['default']

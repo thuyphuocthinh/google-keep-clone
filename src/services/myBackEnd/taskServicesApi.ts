@@ -66,6 +66,12 @@ class TaskServiceApi extends BaseService {
   getTaskReminded(userId: string) {
     return this.get(`${DOMAIN}/tasks/getTasksRemindedByUser/${userId}`);
   }
+  pinTask(taskId: string) {
+    return this.patch(`${DOMAIN}/tasks/pin/${taskId}`, {})
+  }
+  unpinTask(taskId: string) {
+    return this.patch(`${DOMAIN}/tasks/unpin/${taskId}`, {})
+  }
 }
 
 export const taskServiceApi = new TaskServiceApi();

@@ -8,6 +8,9 @@
     <span :id="task.id" class="task-item-check" @click="handleSelectItem">
       <i :id="task.id" class="fa-solid fa-check"></i>
     </span>
+    <span v-if="task.pinned" class="task-pin">
+      <i class="fa-solid fa-thumbtack"></i>
+    </span>
     <div v-if="task.image" class="task-image">
       <img :src="task.image" :alt="task.image" />
     </div>
@@ -67,6 +70,18 @@
                 <i class="fa-solid fa-clock"></i>
               </span>
               Reminder
+            </li>
+            <li class="dropdown-item" v-if="task.pinned !== true" @click="handlePinTask">
+              <span class="sider-icon">
+                <i class="fa-solid fa-thumbtack"></i>
+              </span>
+              Pin
+            </li>
+            <li class="dropdown-item" v-else @click="handleUnpinTask">
+              <span class="sider-icon">
+                <i class="fa-solid fa-thumbtack"></i>
+              </span>
+              Unpin
             </li>
           </ul>
         </div>
@@ -250,6 +265,16 @@ const handleDeleteReminder = () => {
   );
 };
 
+const handlePinTask = () => {
+  tasksHelper.pinTask(props.task.id || "", userLogin.id, store);
+  closeDropdown();
+};
+
+const handleUnpinTask = () => {
+  tasksHelper.unpinTask(props.task.id || "", userLogin.id, store);
+  closeDropdown();
+};
+
 onClickOutside(labelPopupRef, () => (showEditLabel.value = false));
 onClickOutside(reminderPopupRef, () => (showReminder.value = false));
 
@@ -263,7 +288,7 @@ onUnmounted(() => {
 });
 </script>
 
-<style>
+<style scoped>
 .task-item {
   padding: 10px;
   width: 100%;
@@ -293,6 +318,16 @@ onUnmounted(() => {
   left: -6px;
   cursor: pointer;
   display: none;
+}
+
+.task-pin {
+  position: absolute;
+  right: 0;
+  top: -10px;
+  font-size: 16px;
+  z-index: 20;
+  transform: rotate(30deg);
+  color: rgb(223, 0, 0);
 }
 
 .task-item:hover {

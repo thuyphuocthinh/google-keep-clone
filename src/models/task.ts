@@ -18,6 +18,7 @@ export interface Task {
   deleted?: boolean;
   deletedAt?: string;
   deletedBy?: string;
+  pinned?: boolean;
   reminderId: string;
 }
 

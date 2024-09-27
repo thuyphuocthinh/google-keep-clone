@@ -226,3 +226,27 @@ export const getTaskReminded = async (userId: string, store: any) => {
     console.log(error);
   }
 }
+
+export const pinTask = async (taskId: string, userId: string, store: any) => {
+  try {
+    const result = await taskServiceApi.pinTask(taskId);
+    if (result.status === STATUS_CODE.SUCCESS) {
+      await getTasksApi(userId, store);
+      toast.success(result.data.message);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const unpinTask = async (taskId: string, userId: string, store: any) => {
+  try {
+    const result = await taskServiceApi.unpinTask(taskId);
+    if (result.status === STATUS_CODE.SUCCESS) {
+      await getTasksApi(userId, store);
+      toast.success(result.data.message);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}

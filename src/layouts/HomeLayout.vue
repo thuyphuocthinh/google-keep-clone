@@ -35,8 +35,13 @@ onMounted(() => {
   });
 });
 
+onUpdated(() => {
+  socket.emit("registerUser", userLogin.id);
+});
+
 onUnmounted(() => {
   socket.off("remind_event");
+  socket.emit("stop_remind_event");
 });
 </script>
 

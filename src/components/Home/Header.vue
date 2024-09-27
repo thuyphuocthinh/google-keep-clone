@@ -189,7 +189,7 @@ watch(
   top: 0;
   left: 0;
   right: 0;
-  z-index: 20;
+  z-index: 100;
   background-color: #fff;
   box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.4);
   /* animation: name duration timing-function delay iteration-count direction fill-mode; */
