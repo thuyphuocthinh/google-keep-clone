@@ -29,14 +29,14 @@
                 @input="handleTypingSearch"
               />
             </form>
-            <div class="header-tools">
+            <!-- <div class="header-tools">
               <span>
                 <i class="fa-solid fa-gear"></i>
               </span>
               <span>
                 <i class="fa-solid fa-rotate-right"></i>
               </span>
-            </div>
+            </div> -->
           </div>
 
           <div class="header-right">
@@ -44,17 +44,42 @@
               <span>
                 <i class="fa-solid fa-magnifying-glass"></i>
               </span>
-              <span>
-                <i class="fa-solid fa-gear"></i>
-              </span>
-              <span>
-                <i class="fa-solid fa-rotate-right"></i>
-              </span>
             </div>
             <div class="header-account">
-              <span>
-                <i class="fa-solid fa-grip"></i>
-              </span>
+              <!-- language  -->
+              <a-dropdown class="header-languages">
+                <a
+                  class="ant-dropdown-link d-flex align-items-center gap-2"
+                  @click.prevent
+                >
+                  <img src="../../assets/images/vietnam-flag.png" style="width: 30px" />
+                  VN
+                </a>
+                <template #overlay>
+                  <a-menu>
+                    <a-menu-item>
+                      <a href="javascript:;" class="d-flex align-items-center gap-2">
+                        <img
+                          src="../../assets/images/vietnam-flag.png"
+                          style="width: 30px"
+                        />
+                        VN
+                      </a>
+                    </a-menu-item>
+                    <a-menu-item>
+                      <a href="javascript:;" class="d-flex align-items-center gap-2">
+                        <img
+                          src="../../assets/images/english-flag.png"
+                          style="width: 30px"
+                        />
+                        EN</a
+                      >
+                    </a-menu-item>
+                  </a-menu>
+                </template>
+              </a-dropdown>
+              <!-- language -->
+              <!-- account -->
               <a-dropdown>
                 <a-avatar>
                   <template #icon><UserOutlined /></template>
@@ -73,6 +98,7 @@
                   </a-menu>
                 </template>
               </a-dropdown>
+              <!--  -->
             </div>
           </div>
         </div>
@@ -311,7 +337,7 @@ watch(
 .header-right .header-account {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 20px;
 }
 
 .header-right .header-account span:last-child {
@@ -322,12 +348,17 @@ watch(
   height: 35px;
 }
 
+.header-right .header-account .header-languages:hover {
+  cursor: pointer;
+}
+
 @media screen and (max-width: 650px) {
   .header-middle {
     display: none;
   }
   .header-right .header-tools {
     display: flex;
+    margin-right: 10px;
   }
 }
 </style>

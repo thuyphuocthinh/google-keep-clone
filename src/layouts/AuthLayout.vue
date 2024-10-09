@@ -25,8 +25,7 @@
 .auth-sider {
   height: 100%;
   flex: 1 0 60%;
-  background: url("../assets/images/keep.png") center center
-    no-repeat;
+  background: url("../assets/images/keep.png") center center no-repeat;
   background-size: 400px;
   background-color: #b5deff;
 }

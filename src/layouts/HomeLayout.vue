@@ -21,6 +21,7 @@ import Header from "../components/Home/Header.vue";
 import Sidebar from "../components/Home/Sidebar.vue";
 import ToolBar from "../components/Home/ToolBar.vue";
 import { toast } from "vue3-toastify";
+import startWorker from "../stomp";
 
 const store = useStore();
 const isSiderFull = computed(() => store.state.sidebar.isSiderFull);
@@ -33,6 +34,7 @@ onMounted(() => {
       autoClose: false,
     });
   });
+  startWorker(userLogin.id);
 });
 
 onUpdated(() => {
