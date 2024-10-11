@@ -1,14 +1,17 @@
-import { createApp } from "vue";
+import {createApp } from "vue";
 import "./style.css";
 import App from "./App.vue";
 import { router } from "./routes/index";
 import store from "./store/index";
 import Vue3Toastify, { type ToastContainerOptions } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
+import i18n from "./i18n";
 
 const app = createApp(App);
+
 app.use(router);
 app.use(store);
+app.use(i18n);
 app.use(Vue3Toastify, {
   autoClose: 3000,
   // ...

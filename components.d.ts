@@ -36,6 +36,7 @@ declare module 'vue' {
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     Label: typeof import('./src/components/Label/Label.vue')['default']
     LabelDetail: typeof import('./src/components/Label/LabelDetail.vue')['default']
+    LanguageSwitcher: typeof import('./src/components/LanguageSwitcher/LanguageSwitcher.vue')['default']
     Loading: typeof import('./src/components/Loading/Loading.vue')['default']
     Modal: typeof import('./src/components/Modal/Modal.vue')['default']
     Notifcation: typeof import('./src/components/notifcation/Notifcation.vue')['default']

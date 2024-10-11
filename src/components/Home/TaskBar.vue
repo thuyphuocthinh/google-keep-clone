@@ -2,7 +2,9 @@
   <div class="taskbar">
     <div class="taskbar-container" ref="taskTarget">
       <div v-if="!isShowTaskBarMain" class="taskbar-header">
-        <div class="taskbar-left" @click="showTaskBarMain">Tạo ghi chú ...</div>
+        <div class="taskbar-left" @click="showTaskBarMain">
+          {{ $t("message.createNote") }} ...
+        </div>
         <div class="taskbar-right">
           <span>
             <i class="fa-regular fa-square-check"></i>
@@ -28,7 +30,7 @@
             type="text"
             name="title"
             id="title"
-            placeholder="Tiêu đề"
+            :placeholder="$t('message.title')"
             v-model="task.title"
           />
         </div>
@@ -38,12 +40,12 @@
             id="content"
             ref="textarea"
             v-model="input"
-            placeholder="Nội dung ..."
+            :placeholder="$t('message.content')"
           ></textarea>
         </div>
         <div class="task-time mb-3">
           <div class="d-flex align-items-center gap-2 task-time-start">
-            <p>Start</p>
+            <p>{{ $t("message.start") }}</p>
             <input
               type="datetime-local"
               class="form-control"
@@ -54,7 +56,7 @@
             />
           </div>
           <div class="task-time-end d-flex align-items-center gap-2">
-            <p>End</p>
+            <p>{{ $t("message.end") }}</p>
             <input
               type="datetime-local"
               class="form-control"
@@ -66,7 +68,7 @@
           </div>
         </div>
         <div class="task-status form-group mb-3">
-          <label for="status">Status</label>
+          <label for="status">{{ $t("message.status") }}</label>
           <select
             name="status"
             id="status"
@@ -86,8 +88,12 @@
         <div class="task-tools">
           <TaskWidgets />
           <div class="task-tools-right ms-auto">
-            <button type="button" class="btn-create" @click="createNewTask">Tạo</button>
-            <button type="button" @click="closeTaskBarMain">Đóng</button>
+            <button type="button" class="btn-create" @click="createNewTask">
+              {{ $t("message.create") }}
+            </button>
+            <button type="button" @click="closeTaskBarMain">
+              {{ $t("message.close") }}
+            </button>
           </div>
         </div>
       </div>
@@ -207,7 +213,7 @@ onMounted(() => {
 });
 </script>
 
-<style>
+<style scoped>
 .taskbar {
   margin-top: 100px;
 }

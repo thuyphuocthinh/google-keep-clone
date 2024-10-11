@@ -304,6 +304,10 @@ onUnmounted(() => {
   border: 2px solid #000;
 }
 
+.task-image img {
+  width: 100%;
+}
+
 .task-item-check {
   position: absolute;
   background-color: #000;

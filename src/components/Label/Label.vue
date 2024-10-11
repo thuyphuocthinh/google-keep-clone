@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h6>Quản lí nhãn</h6>
+    <h6>{{ $t("message.label") }}</h6>
     <div class="label-create">
       <input
         type="text"

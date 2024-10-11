@@ -5,7 +5,7 @@
     </div>
     <div v-else class="trash-container">
       <div class="container">
-        <h5 class="mb-4">Lời nhắc</h5>
+        <h5 class="mb-4">{{ $t("message.reminder") }}</h5>
         <div class="row" v-if="taskReminded.length > 0">
           <div
             v-for="task in taskReminded"

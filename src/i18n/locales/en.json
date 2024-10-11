@@ -1,0 +1,21 @@
+{
+  "message": {
+    "note": "Note",
+    "reminder": "Reminder",
+    "label": "Label",
+    "trash": "Trash",
+    "create": "Create",
+    "close": "Close",
+    "search": "Search",
+    "start": "Start",
+    "end": "End",
+    "status": "Status",
+    "createNote": "Create new note",
+    "title": "Title",
+    "content": "Content"
+  },
+  "locale": {
+    "vi": "Vietnam",
+    "en": "English"
+  }
+}

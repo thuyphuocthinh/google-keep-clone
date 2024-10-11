@@ -1,0 +1,21 @@
+{
+  "message": {
+    "note": "Ghi chú",
+    "reminder": "Lời nhắc",
+    "label": "Quản lí nhãn",
+    "trash": "Thùng rác",
+    "create": "Tạo",
+    "close": "Đóng",
+    "search": "Tìm kiếm",
+    "start": "Bắt đầu",
+    "end": "Kết thúc",
+    "status": "Trạng thái",
+    "createNote": "Tạo ghi chú",
+    "title": "Tiêu đề",
+    "content": "Nội dung"
+  },
+  "locale": {
+    "vi": "Vietnam",
+    "en": "English"
+  }
+}

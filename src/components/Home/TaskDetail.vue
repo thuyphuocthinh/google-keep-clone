@@ -18,7 +18,7 @@
       <div class="task-timeStart">
         <span>
           <i class="fa-regular fa-clock"></i>
-          Start
+          {{ $t("message.start") }}
         </span>
         <input
           type="datetime-local"
@@ -34,7 +34,7 @@
       <div class="task-timeEnd">
         <span>
           <i class="fa-regular fa-clock"></i>
-          End
+          {{ $t("message.end") }}
         </span>
         <input
           type="datetime-local"
@@ -48,8 +48,8 @@
         />
       </div>
     </div>
-    <div class="task-status form-group my-3">
-      <label for="status">Status</label>
+    <div class="task-status form-group my-3 d-flex align-items-center gap-2">
+      <label for="status" class="fw-bold">{{ $t("message.status") }}</label>
       <select
         name="status"
         id="status"
@@ -195,7 +195,7 @@ const updateTask = () => {
 */
 </script>
 
-<style>
+<style scoped>
 .task-detail {
   width: 100%;
   display: flex;
@@ -207,6 +207,10 @@ const updateTask = () => {
   font-weight: bold;
   font-size: 16px;
   margin-bottom: 10px;
+}
+
+.task-detail .task-image img {
+  width: 100%;
 }
 
 .task-detail .task-header input {
@@ -241,6 +245,19 @@ const updateTask = () => {
   padding: 20px 0;
   min-height: 200px;
   font-size: 16px;
+}
+
+.task-detail .task-content textarea {
+  resize: none;
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  color: #606060;
+  /* font-weight: 500; */
+  padding: 20px 0;
+  padding-left: 3px;
+  overflow-y: hidden;
 }
 
 .task-detail .task-button {

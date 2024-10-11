@@ -6,6 +6,7 @@ import user from "./modules/user";
 import createPersistedState from "vuex-persistedstate";
 import loading from "./modules/loading";
 import labels from "./modules/labels";
+import language from "./modules/language";
 
 const userState = createPersistedState({
   paths: ["user"],
@@ -19,7 +20,8 @@ export default createStore({
     modal,
     user,
     loading,
-    labels
+    labels,
+    language
   },
   plugins: [userState],
 });

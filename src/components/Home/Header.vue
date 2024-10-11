@@ -47,37 +47,7 @@
             </div>
             <div class="header-account">
               <!-- language  -->
-              <a-dropdown class="header-languages">
-                <a
-                  class="ant-dropdown-link d-flex align-items-center gap-2"
-                  @click.prevent
-                >
-                  <img src="../../assets/images/vietnam-flag.png" style="width: 30px" />
-                  VN
-                </a>
-                <template #overlay>
-                  <a-menu>
-                    <a-menu-item>
-                      <a href="javascript:;" class="d-flex align-items-center gap-2">
-                        <img
-                          src="../../assets/images/vietnam-flag.png"
-                          style="width: 30px"
-                        />
-                        VN
-                      </a>
-                    </a-menu-item>
-                    <a-menu-item>
-                      <a href="javascript:;" class="d-flex align-items-center gap-2">
-                        <img
-                          src="../../assets/images/english-flag.png"
-                          style="width: 30px"
-                        />
-                        EN</a
-                      >
-                    </a-menu-item>
-                  </a-menu>
-                </template>
-              </a-dropdown>
+              <LanguageSwitcher />
               <!-- language -->
               <!-- account -->
               <a-dropdown>
@@ -108,7 +78,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from "vue";
+import { computed, ref, watch, reactive } from "vue";
 import type { Ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
@@ -116,6 +86,7 @@ import { UserOutlined } from "@ant-design/icons-vue";
 import * as tasksHelper from "../../helpers/tasksHelper";
 import { toast } from "vue3-toastify";
 import { removeToken } from "../../helpers/getToken";
+import LanguageSwitcher from "../LanguageSwitcher/LanguageSwitcher.vue";
 
 const store = useStore();
 const router = useRouter();
@@ -125,6 +96,7 @@ const searchRef: Ref<HTMLInputElement | null> = ref(null);
 const idTimeOut: Ref<number> = ref(0);
 const userLogin = store.state.user.userLogin;
 
+// store
 const showFullSider = () => store.dispatch("sidebar/showFullSidebar");
 const showIconSider = () => store.dispatch("sidebar/showIconSidebar");
 const handleShowHideSidebar = () => {
@@ -183,6 +155,7 @@ const handleSubmitSearch = (e: Event) => {
   }
 };
 
+// watch changes of route
 watch(
   () => route.path, // Watch the route's path specifically
   (newPath) => {
@@ -322,7 +295,7 @@ watch(
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  width: 125px;
+  width: 150px;
   color: #5f6368;
 }
 
@@ -344,7 +317,7 @@ watch(
   background-color: #01579b;
   border-radius: 50%;
   color: #fff;
-  width: 35px;
+  width: 80px;
   height: 35px;
 }
 

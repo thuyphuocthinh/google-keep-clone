@@ -8,7 +8,7 @@
             <span class="sider-icon">
               <i class="fa-regular fa-lightbulb"></i>
             </span>
-            <span class="sider-title"> Ghi chú </span>
+            <span class="sider-title"> {{ t("message.note") }} </span>
           </router-link>
         </li>
         <li class="sider-item">
@@ -16,7 +16,7 @@
             <span class="sider-icon">
               <i class="fa-regular fa-bell"></i>
             </span>
-            <span class="sider-title"> Lời nhắc </span>
+            <span class="sider-title"> {{ t("message.reminder") }} </span>
           </router-link>
         </li>
         <li v-for="(label, index) in labels" :key="index" class="sider-item">
@@ -38,7 +38,7 @@
             <span class="sider-icon">
               <i class="fa-solid fa-pen-to-square"></i>
             </span>
-            <span class="sider-title"> Quản lí nhãn </span>
+            <span class="sider-title"> {{ t("message.label") }} </span>
           </a>
         </li>
         <li class="sider-item">
@@ -46,7 +46,7 @@
             <span class="sider-icon">
               <i class="fa-solid fa-trash"></i>
             </span>
-            <span class="sider-title"> Thùng rác </span>
+            <span class="sider-title"> {{ t("message.trash") }} </span>
           </router-link>
         </li>
       </ul>
@@ -92,12 +92,14 @@ import { onMounted, onUnmounted, onUpdated, computed } from "vue";
 import { useStore } from "vuex";
 import Label from "../Label/Label.vue";
 import * as labelsHelper from "../../helpers/labelHelper";
+import { useI18n } from "vue-i18n";
 
 const store = useStore();
 const isSiderFull = computed(() => store.state.sidebar.isSiderFull);
 const canHover = computed(() => store.state.sidebar.canHover);
 const labels = computed(() => store.getters["labels/getLabels"]);
 const userLogin = store.state.user.userLogin;
+const { t } = useI18n();
 
 // methods
 const hoverSidebar = (value: any) =>
