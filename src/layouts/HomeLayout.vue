@@ -17,6 +17,7 @@
 import { computed, onMounted, onUnmounted, onUpdated } from "vue";
 import { socket } from "../socket";
 import { useStore } from "vuex";
+import Tr from "../i18n/translation";
 import Header from "../components/Home/Header.vue";
 import Sidebar from "../components/Home/Sidebar.vue";
 import ToolBar from "../components/Home/ToolBar.vue";
@@ -27,7 +28,7 @@ const store = useStore();
 const isSiderFull = computed(() => store.state.sidebar.isSiderFull);
 const userLogin = store.state.user.userLogin;
 
-onMounted(() => {
+onMounted(async () => {
   socket.emit("registerUser", userLogin.id);
   socket.on("remind_event", (mesasge: any) => {
     toast.success(`Lời nhắc: ${mesasge} `, {
@@ -35,6 +36,11 @@ onMounted(() => {
     });
   });
   startWorker(userLogin.id);
+  // default i18n
+  const defaultLang: string | null = localStorage.getItem("user-locale");
+  if (defaultLang) {
+    await Tr.switchLanguage(defaultLang);
+  }
 });
 
 onUpdated(() => {

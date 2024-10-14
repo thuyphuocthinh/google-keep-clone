@@ -25,7 +25,7 @@
                 type="search"
                 name="keyword"
                 id="keyword"
-                placeholder="Tìm kiếm"
+                :placeholder="$t('message.search')"
                 @input="handleTypingSearch"
               />
             </form>
@@ -60,10 +60,10 @@
                       <span> Hi, {{ userLogin.username }} </span>
                     </a-menu-item>
                     <a-menu-item>
-                      <a href="javascript:;">Profile</a>
+                      <a href="javascript:;">{{ $t("message.profile") }}</a>
                     </a-menu-item>
                     <a-menu-item>
-                      <span @click="myHandleLogOut">Logout</span>
+                      <span @click="myHandleLogOut">{{ $t("message.logout") }}</span>
                     </a-menu-item>
                   </a-menu>
                 </template>

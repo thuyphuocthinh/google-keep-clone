@@ -12,7 +12,9 @@
     "status": "Trạng thái",
     "createNote": "Tạo ghi chú",
     "title": "Tiêu đề",
-    "content": "Nội dung"
+    "content": "Nội dung",
+    "logout": "Đăng xuất",
+    "profile": "Hồ sơ"
   },
   "locale": {
     "vi": "Vietnam",

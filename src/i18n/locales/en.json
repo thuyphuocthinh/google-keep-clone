@@ -12,7 +12,9 @@
     "status": "Status",
     "createNote": "Create new note",
     "title": "Title",
-    "content": "Content"
+    "content": "Content",
+    "logout": "Logout",
+    "profile": "Profile"
   },
   "locale": {
     "vi": "Vietnam",

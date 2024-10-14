@@ -20,14 +20,20 @@ const supportedLocales = Tr.supportedLocales;
 // switchlanguage
 const switchLanguage = async (event: Event) => {
   // <--- 1
-  const newLocale = event.target.value; // <--- 2
-  await Tr.switchLanguage(newLocale); // <--- 3
+  const target = event.target as HTMLInputElement;
+  if (target) {
+    const newLocale = target.value; // <--- 2
+    await Tr.switchLanguage(newLocale); // <--- 3
+  }
 };
 
 // watch changes of locale
 watch(
   () => locale,
-  (oldValue, newValue) => {}
+  (oldValue, newValue) => {
+    console.log("oldValue: ", oldValue);
+    console.log("newValue: ", newValue);
+  }
 );
 </script>
 <style scoped></style>
